@@ -1,21 +1,31 @@
 import React, { useState } from "react";
-import { Button, Radio } from "antd";
+import { Button } from "antd";
 
 const CategorySection = ({ onCategoryChange }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    onCategoryChange(e.target.value);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    onCategoryChange(category);
   };
 
+  const categories = [
+    { label: "Tất cả", value: "all" },
+    { label: "Quần áo", value: "clothing" },
+    { label: "Đồ điện tử", value: "electronics" },
+  ];
+
   return (
-    <div className="flex items-center justify-between mb-4">
-      <Radio.Group onChange={handleCategoryChange} value={selectedCategory}>
-        <Radio value="all">Tất cả</Radio>
-        <Radio value="clothing">Quần áo</Radio>
-        <Radio value="electronics">Đồ điện tử</Radio>
-      </Radio.Group>
+    <div className="flex items-center gap-2 mb-4 w-full mx-auto sm:max-w-7xl">
+      {categories.map((category) => (
+        <Button
+          key={category.value}
+          type={selectedCategory === category.value ? "primary" : "default"}
+          onClick={() => handleCategoryChange(category.value)}
+        >
+          {category.label}
+        </Button>
+      ))}
     </div>
   );
 };

@@ -1,13 +1,9 @@
 import React from "react";
 import { Card } from "antd";
-
+import { formatVND } from "../helpers/format";
 const { Meta } = Card;
 
 const ProductCard = ({ product }) => {
-  const formatVND = (price) => {
-    return price.toLocaleString("vi-VN") + "₫";
-  };
-
   return (
     <Card
       hoverable
