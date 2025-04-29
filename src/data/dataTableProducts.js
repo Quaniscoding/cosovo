@@ -1,0 +1,123 @@
+const productsData = [
+  {
+    id: 1,
+    name: "Smartphone X",
+    description: "Latest model",
+    price: 299.99,
+    category_id: "electronics",
+  },
+  {
+    id: 2,
+    name: "Laptop Y",
+    description: "High performance laptop",
+    price: 999.99,
+    category_id: "electronics",
+  },
+  {
+    id: 3,
+    name: "Headphones Z",
+    description: "Noise canceling",
+    price: 129.99,
+    category_id: "electronics",
+  },
+  {
+    id: 4,
+    name: "T-Shirt A",
+    description: "Cotton T-shirt",
+    price: 19.99,
+    category_id: "clothing",
+  },
+  {
+    id: 5,
+    name: "Jeans B",
+    description: "Slim fit jeans",
+    price: 49.99,
+    category_id: "clothing",
+  },
+  {
+    id: 6,
+    name: "Jacket C",
+    description: "Winter jacket",
+    price: 89.99,
+    category_id: "clothing",
+  },
+  {
+    id: 7,
+    name: "Smartwatch D",
+    description: "Waterproof smartwatch",
+    price: 199.99,
+    category_id: "electronics",
+  },
+  {
+    id: 8,
+    name: "Tablet E",
+    description: "Affordable tablet",
+    price: 149.99,
+    category_id: "electronics",
+  },
+  {
+    id: 9,
+    name: "Socks F",
+    description: "Comfy socks",
+    price: 9.99,
+    category_id: "clothing",
+  },
+  {
+    id: 10,
+    name: "Boots G",
+    description: "Leather boots",
+    price: 129.99,
+    category_id: "clothing",
+  },
+];
+
+const variantsData = [
+  { id: 1, product_id: 1, color: "Black", size: "M", stock: 20, price: 299.99 },
+  { id: 2, product_id: 1, color: "White", size: "L", stock: 15, price: 309.99 },
+  {
+    id: 3,
+    product_id: 2,
+    color: "Silver",
+    size: "L",
+    stock: 10,
+    price: 999.99,
+  },
+  { id: 4, product_id: 3, color: "Black", size: "M", stock: 30, price: 129.99 },
+  { id: 5, product_id: 4, color: "Blue", size: "L", stock: 50, price: 19.99 },
+  {
+    id: 6,
+    product_id: 5,
+    color: "Dark Blue",
+    size: "M",
+    stock: 40,
+    price: 49.99,
+  },
+  { id: 7, product_id: 6, color: "Red", size: "M", stock: 25, price: 89.99 },
+  { id: 8, product_id: 7, color: "Black", size: "M", stock: 15, price: 199.99 },
+  { id: 9, product_id: 8, color: "White", size: "M", stock: 35, price: 149.99 },
+  { id: 10, product_id: 9, color: "Gray", size: "M", stock: 60, price: 9.99 },
+  {
+    id: 11,
+    product_id: 10,
+    color: "Brown",
+    size: "L",
+    stock: 20,
+    price: 129.99,
+  },
+];
+
+const imagesData = [
+  { id: 1, variant_id: 1, url: "https://example.com/smartphone_black.jpg" },
+  { id: 2, variant_id: 2, url: "https://example.com/smartphone_white.jpg" },
+  { id: 3, variant_id: 3, url: "https://example.com/laptop_silver.jpg" },
+  { id: 4, variant_id: 4, url: "https://example.com/headphones_black.jpg" },
+  { id: 5, variant_id: 5, url: "https://example.com/tshirt_blue.jpg" },
+  { id: 6, variant_id: 6, url: "https://example.com/jeans_darkblue.jpg" },
+  { id: 7, variant_id: 7, url: "https://example.com/jacket_red.jpg" },
+  { id: 8, variant_id: 8, url: "https://example.com/smartwatch_black.jpg" },
+  { id: 9, variant_id: 9, url: "https://example.com/tablet_white.jpg" },
+  { id: 10, variant_id: 10, url: "https://example.com/socks_gray.jpg" },
+  { id: 11, variant_id: 11, url: "https://example.com/boots_brown.jpg" },
+];
+
+export { productsData, variantsData, imagesData };
