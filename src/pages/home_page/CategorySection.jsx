@@ -9,17 +9,28 @@ const CategorySection = ({ onCategoryChange }) => {
     setSelectedCategory(category);
     onCategoryChange(category);
   };
+
   const { categories, loading } = useCategories();
+
   const categoryLabels = {
     clothing: "Quần áo",
     electronics: "Đồ điện tử",
+    furniture: "Đồ nội thất",
+    accessories: "Phụ kiện",
+    shoes: "Giày dép",
   };
+
   const displayCategories = [
     { label: "Tất cả", value: "" },
-    ...categories.map((cat) => ({
-      label: categoryLabels[cat.name] || cat.name,
-      value: cat.name,
-    })),
+    ...categories.map((cat) => {
+      const normalizedCategory = cat.name.toLowerCase();
+      const label = categoryLabels[normalizedCategory];
+
+      return {
+        label: label || cat.name,
+        value: cat.name,
+      };
+    }),
   ];
 
   return (

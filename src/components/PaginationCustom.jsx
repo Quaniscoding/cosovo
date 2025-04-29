@@ -1,19 +1,19 @@
 import React from "react";
-import { Pagination as AntPagination } from "antd";
+import { Pagination } from "antd";
 
-const Pagination = ({ total, pageSize, currentPage, onPageChange }) => {
+const PaginationCustom = ({ total, pageSize, current, onChange }) => {
   return (
     <div className="flex items-center justify-between sm:justify-end my-4 w-full ">
       <span className="text-base font-semibold">Total Products: {total}</span>
-      <AntPagination
-        current={currentPage}
+      <Pagination
+        current={current}
         pageSize={pageSize}
         total={total}
-        onChange={onPageChange}
+        onChange={onChange}
         showSizeChanger={false}
       />
     </div>
   );
 };
 
-export default Pagination;
+export default PaginationCustom;

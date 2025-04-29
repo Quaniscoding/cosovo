@@ -24,19 +24,21 @@ export default function LoginPage() {
   const onFinish = async (values) => {
     try {
       const result = await login(values);
-      toast.success(result.message || "Đăng nhập thành công!");
+      if (result.token) {
+        toast.success(result.message || "Đăng nhập thành công!");
+        Cookies.set("token", result.token, {
+          expires: 7,
+          secure: true,
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        navigate("/admin");
+      }
       if (result.status === 401) {
-        toast.error(result.response.data.message);
+        toast.error(result.response.data.error);
         return;
       }
-      Cookies.set("token", result.token, {
-        expires: 7,
-        secure: true,
-        sameSite: "Strict",
-        path: "/",
-      });
-
-      navigate("/admin");
     } catch (error) {
       toast.error(error.message || "Đăng nhập thất bại");
       console.error("Login error:", error);
