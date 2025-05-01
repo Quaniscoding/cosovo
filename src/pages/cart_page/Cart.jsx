@@ -8,9 +8,32 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [discountCode, setDiscountCode] = useState("");
   const [loading, setLoading] = useState(true);
-  const [percent, setPercent] = useState(0);
+  const [selectedItems, setSelectedItems] = useState([]);
+  console.log(cartItems);
 
-  // Load cart from localStorage and merge duplicates on component mount
+  const toggleItem = (index) => {
+    setSelectedItems((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedItems.length === cartItems.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cartItems.map((_, i) => i));
+    }
+  };
+
+  const removeSelectedItems = () => {
+    const updatedCart = cartItems.filter(
+      (_, index) => !selectedItems.includes(index)
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setSelectedItems([]);
+  };
+
   useEffect(() => {
     const fetchCart = () => {
       const storedCart = localStorage.getItem("cart");
@@ -22,50 +45,39 @@ export default function Cart() {
       }
     };
 
-    // Giả lập loading 3s
+    // Giả lập loading 1s
+    setLoading(true);
     setTimeout(() => {
       fetchCart();
-      setLoading(true);
-      let ptg = -10;
-
-      const interval = setInterval(() => {
-        ptg += 10;
-        setPercent(ptg);
-
-        if (ptg > 120) {
-          clearInterval(interval);
-          setLoading(false);
-          setPercent(0);
-        }
-      }, 50);
+      setLoading(false);
     }, 1000);
   }, []);
 
-  // Function to merge duplicate items based on id, color, and size
-  const mergeDuplicateItems = (items) => {
-    const merged = [];
-    items.forEach((item) => {
-      const existingItem = merged.find(
-        (i) =>
-          i.id === item.id && i.color === item.color && i.size === item.size
-      );
-      if (existingItem) {
-        existingItem.quantity += item.quantity;
-      } else {
-        merged.push({ ...item });
-      }
-    });
-    return merged;
-  };
-
-  // Remove item from cart
   const removeFromCart = (index) => {
     const updatedCart = cartItems.filter((_, i) => i !== index);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // Update quantity of an item
+  const mergeDuplicateItems = (items) => {
+    const merged = [];
+
+    for (const item of items) {
+      const key = `${item.id}-${item.color}-${item.size}`;
+      const existingIndex = merged.findIndex(
+        (i) => `${i.id}-${i.color}-${i.size}` === key
+      );
+
+      if (existingIndex !== -1) {
+        merged[existingIndex].quantity += item.quantity;
+      } else {
+        merged.push({ ...item });
+      }
+    }
+
+    return merged;
+  };
+
   const updateQuantity = (index, newQuantity) => {
     if (newQuantity < 1) return;
     const updatedCart = [...cartItems];
@@ -74,7 +86,6 @@ export default function Cart() {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // Calculate total price
   const calculateTotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -86,7 +97,7 @@ export default function Cart() {
   const shippingFee = 0;
   const finalTotal = total + shippingFee;
   if (loading) {
-    return <Loading percent={percent} loading={loading} />;
+    return <Loading loading={loading} />;
   }
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl text-gray-800 h-screen">
@@ -103,17 +114,20 @@ export default function Cart() {
       />
 
       {cartItems.length === 0 ? (
-        <Text className="text-center text-gray-500 text-sm sm:text-base">
+        <span className="text-center text-gray-500 text-sm sm:text-base">
           Giỏ hàng của bạn đang trống.
-        </Text>
+        </span>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
           <CartItems
             cartItems={cartItems}
             updateQuantity={updateQuantity}
             removeFromCart={removeFromCart}
             total={total}
+            selectedItems={selectedItems}
+            toggleItem={toggleItem}
+            toggleSelectAll={toggleSelectAll}
+            removeSelectedItems={removeSelectedItems}
           />
 
           {/* Order Summary */}

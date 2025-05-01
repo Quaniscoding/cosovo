@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "./useDebounce";
 import {
   fetchCategoriesFailure,
   fetchCategoriesRequest,
@@ -8,38 +7,32 @@ import {
 } from "../states/slices/CategoriesSlice";
 import { getCategories } from "../services/CategoriesServices";
 
-export function useCategories(payload) {
+export function useCategories() {
   const dispatch = useDispatch();
   const { categories, loading, error } = useSelector(
     (state) => state.categories
   );
-
-  const cache = useRef({});
-
-  const debouncedPayload = useDebounce(payload, 500);
+  const cache = useRef(null);
 
   useEffect(() => {
-    const key = JSON.stringify(debouncedPayload);
     async function fetchData() {
+      if (cache.current) {
+        dispatch(fetchCategoriesSuccess(cache.current));
+        return;
+      }
+
       dispatch(fetchCategoriesRequest());
       try {
-        if (cache.current[key]) {
-          await new Promise((res) => setTimeout(res, 300));
-          dispatch(fetchCategoriesSuccess(cache.current[key]));
-          return;
-        }
-
-        const { data } = await getCategories(debouncedPayload);
-        await new Promise((res) => setTimeout(res, 300));
-
+        const { data } = await getCategories();
         dispatch(fetchCategoriesSuccess(data));
-        cache.current[key] = data;
+        cache.current = data;
       } catch (err) {
         dispatch(fetchCategoriesFailure(err.message));
       }
     }
+
     fetchData();
-  }, [dispatch, debouncedPayload]);
+  }, [dispatch]);
 
   return { categories, loading, error };
 }

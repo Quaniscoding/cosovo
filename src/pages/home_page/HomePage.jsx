@@ -19,8 +19,6 @@ export default function HomePage() {
   }, []);
 
   const onChange = useCallback((page, size) => {
-    console.log(page, size);
-
     setPayload((p) => ({ ...p, page: page, size: size }));
   }, []);
 

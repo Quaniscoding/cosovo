@@ -1,75 +1,103 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { products } from "../../data/products";
 
 import { CartContext } from "../../contexts/CartContext";
 import CustomBreadcrumb from "../../components/CustomBreadcrumb";
 import "swiper/css";
 import ProductImages from "./ProductImages";
 import ProductInfo from "./ProductInfo";
-import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "../../hooks/useDebounce";
-import {
-  fetchProductDetailsFailure,
-  fetchProductDetailsRequest,
-  fetchProductDetailsSuccess,
-} from "../../states/slices/ProductDetailsSlice";
-import { getProductsDetails } from "../../services/ProductsServices";
-// import "swiper/css/thumbs";
+import { useProductDetails } from "../../hooks/useProductDetails";
+import { useCategories } from "../../hooks/useCategories";
+import Loading from "../../components/Loading";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const dispatch = useDispatch();
-  // const product = products.find((product) => product.id === parseInt(id, 10));
-  const { product, loading, error } = useSelector(
-    (state) => state.productDetails
-  );
-  console.log(product);
-
-  const debouncedPayload = useDebounce(product, 300);
-  const cache = useRef({});
-  useEffect(() => {
-    const key = JSON.stringify(debouncedPayload);
-    async function fetchData() {
-      if (cache.current[key]) {
-        dispatch(fetchProductDetailsSuccess(cache.current[key]));
-        return;
-      }
-      dispatch(fetchProductDetailsRequest());
-      try {
-        const { data } = await getProductsDetails(id);
-        dispatch(fetchProductDetailsSuccess(data.data));
-        cache.current[key] = data.data;
-      } catch (error) {
-        dispatch(fetchProductDetailsFailure(error.message));
-      }
-    }
-    fetchData();
-  }, [dispatch, id, debouncedPayload]);
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  const [productDetails, setProductDetails] = useState({
-    price: product?.price,
-    color: product?.colors[0],
-    size: product?.sizes[0],
-    quantity: 1,
-  });
+  const { product, loading } = useProductDetails(id);
+  const { categories } = useCategories();
   const { addToCart } = useContext(CartContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const [productDetails, setProductDetails] = useState({
+    color: "",
+    size: [""],
+    quantity: 1,
+    image: "",
+    price: 0,
+    stock: 0,
+    variant_id: null,
+  });
+  const [selectedColor, setSelectedColor] = useState("");
+  const colorToImagesMap = product?.variants.reduce((acc, variant) => {
+    if (variant.images.length > 0) {
+      acc[variant.color] = variant.images.map((img) => img.url);
+    }
+    return acc;
+  }, {});
+  const currentCategory = categories.find(
+    (cat) => cat.id === product?.category_id
+  );
+  const isElectronics = currentCategory?.name?.toLowerCase() === "electronics";
+  useEffect(() => {
+    if (product) {
+      const defaultVariant = product.variants[0];
+      setProductDetails({
+        color: defaultVariant?.color || "",
+        size: [defaultVariant?.size || ""],
+        quantity: 1,
+        image: defaultVariant?.images[0]?.url || "",
+        price: defaultVariant?.price || 0,
+        stock: defaultVariant?.stock || 0,
+        variant_id: defaultVariant?.id || null,
+        isElectronics: isElectronics,
+      });
+      setSelectedColor(defaultVariant?.color || "");
+    }
+  }, [product, isElectronics]);
+
+  if (loading || !product) {
+    return <Loading loading={loading} />;
+  }
+
   const handleAdd = () => {
+    const selectedVariant =
+      product.variants.find(
+        (variant) =>
+          variant.color === productDetails.color &&
+          variant.size === productDetails.size
+      ) || product.variants[0];
+
+    if (
+      (!isElectronics && (!productDetails.color || !productDetails.size)) ||
+      (isElectronics && !productDetails.color)
+    ) {
+      setError(
+        "Vui lòng chọn màu sắc" + (isElectronics ? "." : " và kích thước.")
+      );
+      return false;
+    }
+
+    setError(null);
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: productDetails.price,
       color: productDetails.color,
-      size: productDetails.size,
+      size: isElectronics ? null : productDetails.size,
       quantity: productDetails.quantity,
-      image: product.images[0],
+      image: selectedVariant.images[0]?.url || "",
+      variant_id: selectedVariant.id,
+      isElectronics: isElectronics,
     });
+    return true;
   };
+
   const handleAddAndOpenModal = () => {
-    handleAdd();
-    setIsModalOpen(true);
+    const ok = handleAdd();
+    if (ok) {
+      setIsModalOpen(true);
+    }
   };
 
   const handleViewCart = () => {
@@ -79,11 +107,6 @@ export default function ProductDetails() {
   const handleContinueShopping = () => {
     setIsModalOpen(false);
   };
-  if (!product) {
-    return (
-      <div className="container mx-auto p-4 text-center">Product not found</div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
@@ -99,15 +122,15 @@ export default function ProductDetails() {
           },
         ]}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
-        {/* Product Images */}
-
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
         <ProductImages
           product={product}
-          thumbsSwiper={thumbsSwiper}
-          setThumbsSwiper={setThumbsSwiper}
+          productDetails={productDetails}
+          setProductDetails={setProductDetails}
+          setSelectedColor={setSelectedColor}
+          selectedColor={selectedColor}
+          colorToImagesMap={colorToImagesMap}
         />
-        {/* Product Info */}
         <ProductInfo
           product={product}
           productDetails={productDetails}
@@ -116,6 +139,14 @@ export default function ProductDetails() {
           isModalOpen={isModalOpen}
           handleContinueShopping={handleContinueShopping}
           handleViewCart={handleViewCart}
+          categories={categories}
+          error={error}
+          setError={setError}
+          currentCategory={currentCategory}
+          isElectronics={isElectronics}
+          setSelectedColor={setSelectedColor}
+          colorToImagesMap={colorToImagesMap}
+          selectedColor={selectedColor}
         />
       </div>
     </div>

@@ -5,7 +5,7 @@ const Pagination = ({ total, pageSize, currentPage, onPageChange }) => {
   return (
     <div className="flex items-center justify-between sm:justify-end my-4 w-full">
       <span className="text-base font-semibold text-gray-800">
-        Total Products: {total}
+        Toàn bộ sản phẩm: {total}
       </span>
       <AntPagination
         current={currentPage}

@@ -10,7 +10,7 @@ const CategorySection = ({ onCategoryChange }) => {
     onCategoryChange(category);
   };
 
-  const { categories, loading } = useCategories();
+  const { categories, loading } = useCategories({});
 
   const categoryLabels = {
     clothing: "Quần áo",
@@ -34,7 +34,7 @@ const CategorySection = ({ onCategoryChange }) => {
   ];
 
   return (
-    <div className="flex items-center gap-2 mb-4 w-full mx-auto sm:max-w-7xl">
+    <div className="flex items-center gap-2 w-full mx-auto sm:max-w-7xl">
       {loading
         ? Array.from({ length: 3 }).map((_, index) => (
             <Skeleton.Button

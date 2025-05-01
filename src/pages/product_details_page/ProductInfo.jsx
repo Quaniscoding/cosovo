@@ -2,10 +2,11 @@ import React from "react";
 import { InputNumber, Typography, Divider, Modal } from "antd";
 import ModalNotification from "./ModalNotification";
 import ReusableButton from "../../components/ui/Button";
+import { colorTranslations } from "../../components/constants/color";
 
 const { Title, Text } = Typography;
 
-export default function ProductInfo({
+function ProductInfo({
   product,
   productDetails,
   setProductDetails,
@@ -13,9 +14,44 @@ export default function ProductInfo({
   isModalOpen,
   handleContinueShopping,
   handleViewCart,
+  error,
+  setError,
+  isElectronics,
+  setSelectedColor,
+  colorToImagesMap,
+  selectedColor,
 }) {
+  const variantsByColor = product.variants.filter(
+    (v) => v.color === productDetails.color
+  );
+  const sizes = [...new Set(variantsByColor.map((v) => v.size))];
+
+  // Determine the currently selected variant
+  const selectedVariant = product.variants.find(
+    (v) => v.color === productDetails.color && v.size === productDetails.size
+  );
+  const stock = selectedVariant?.stock || productDetails?.stock;
+
+  // Handle size change
+  const onSizeSelect = (size) => {
+    setProductDetails({ ...productDetails, size, quantity: 1 });
+    setError(null);
+  };
+
+  // Determine disable state and button label
+  const needsSize = !isElectronics;
+  const noSizeSelected = needsSize && !productDetails.size;
+  const outOfStock = stock === 0;
+  const overQuantity = productDetails.quantity > stock;
+  const isDisabled = noSizeSelected || outOfStock || overQuantity;
+
+  let buttonText = "Thêm vào giỏ hàng";
+  if (outOfStock) buttonText = "Hết hàng";
+  else if (noSizeSelected) buttonText = "Chọn kích thước";
+  else if (overQuantity) buttonText = "Vượt quá tồn kho";
+
   return (
-    <div className="flex flex-col gap-4 sm:gap-6 lg:col-span-4">
+    <div className="flex flex-col gap-4 sm:gap-6 lg:col-span-6">
       <Title
         level={2}
         className="text-xl sm:text-2xl md:text-3xl font-semibold"
@@ -23,7 +59,7 @@ export default function ProductInfo({
         {product.name}
       </Title>
       <Text type="secondary" className="text-sm sm:text-base">
-        {product.description}
+        {product.description || "Không có mô tả"}
       </Text>
 
       <Divider className="my-2" />
@@ -31,40 +67,48 @@ export default function ProductInfo({
       {/* Color Selection */}
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 sm:gap-3">
-          {product.colors.map((color, index) => (
+          {Object.keys(colorToImagesMap).map((color) => (
             <button
-              key={index}
-              onClick={() => setProductDetails({ ...productDetails, color })}
-              className={
-                `w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 transform transition-transform duration-200 cursor-pointer ` +
-                (productDetails.color === color
-                  ? "border-gray-600 scale-110"
-                  : "border-gray-300 hover:scale-110")
-              }
+              key={color}
+              onClick={() => {
+                setSelectedColor(color);
+                setProductDetails((prev) => ({
+                  ...prev,
+                  color, // ← thêm dòng này
+                  size: undefined, // ← reset size nếu cần
+                  quantity: 1, // ← reset qty nếu cần
+                  image: colorToImagesMap[color][0], // ← main image
+                }));
+              }}
+              className={`w-8 h-8 flex items-center justify-center border rounded-full transition-all duration-300 cursor-pointer
+      ${
+        selectedColor === color
+          ? "ring-2 ring-black scale-110 shadow-md border-black"
+          : "bg-gray-100 text-gray-800"
+      }`}
               style={{ backgroundColor: color }}
-              aria-label={`Select color ${color}`}
-            />
+              title={color}
+            ></button>
           ))}
         </div>
         <span className="text-sm sm:text-base text-gray-400">
-          Color: {productDetails.color}
+          Màu: {colorTranslations[selectedColor] || selectedColor}
         </span>
       </div>
 
       {/* Size Selection */}
-      {product.category === "clothing" && (
+      {!isElectronics && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-2">
-            {product.sizes.map((size, index) => (
+            {sizes.map((size) => (
               <button
-                key={index}
-                onClick={() => setProductDetails({ ...productDetails, size })}
-                className={
-                  `w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ` +
-                  (productDetails.size === size
+                key={size}
+                onClick={() => onSizeSelect(size)}
+                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ${
+                  productDetails.size === size
                     ? "border-gray-600 scale-105"
-                    : "border-gray-300 hover:scale-105")
-                }
+                    : "border-gray-300 hover:scale-105"
+                }`}
               >
                 {size}
               </button>
@@ -77,10 +121,10 @@ export default function ProductInfo({
       )}
 
       {/* Quantity Input */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-start gap-4">
         <InputNumber
           min={1}
-          defaultValue={1}
+          max={stock}
           value={productDetails.quantity}
           onChange={(value) =>
             setProductDetails({ ...productDetails, quantity: value })
@@ -88,18 +132,22 @@ export default function ProductInfo({
           className="w-20 sm:w-24 border-2 rounded-lg !text-xl font-semibold"
           size="large"
           aria-label="Select quantity"
+          disabled={outOfStock}
         />
+        <span className="text-sm text-gray-500">Có sẵn: {stock}</span>
       </div>
 
-      <Divider className="my-2" />
+      {error && <span className="text-sm sm:text-base !h-1">{error}</span>}
+
+      <Divider className="!my-1" />
 
       {/* Price and Add to Cart */}
       <div className="flex flex-col items-start gap-4">
         <span className="text-lg sm:text-xl lg:text-2xl text-black font-bold">
-          {product.price.toLocaleString()} VND
+          {productDetails.price.toLocaleString()} VND
         </span>
-        <ReusableButton onClick={handleAddAndOpenModal}>
-          thêm vào giỏ hàng
+        <ReusableButton onClick={handleAddAndOpenModal} disabled={isDisabled}>
+          {buttonText}
         </ReusableButton>
         <ModalNotification
           isModalOpen={isModalOpen}
@@ -111,3 +159,5 @@ export default function ProductInfo({
     </div>
   );
 }
+
+export default ProductInfo;

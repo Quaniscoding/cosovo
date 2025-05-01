@@ -10,7 +10,7 @@ const AdminLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ height: "100vh" }}>
       <Sidebar collapsed={collapsed} />
       <Layout style={{ overflow: "auto" }}>
         <HeaderAdmin
@@ -22,7 +22,7 @@ const AdminLayout = () => {
           style={{
             margin: "24px 16px",
             padding: 24,
-            minHeight: "calc(100vh - 64px)", // Adjust height to account for header
+            height: "calc(100vh - 64px)",
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             overflow: "auto",

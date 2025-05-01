@@ -1,90 +1,123 @@
-import { Button, Select } from "antd";
-import { X } from "lucide-react";
+import { Button, Checkbox, Image, InputNumber } from "antd";
 import React from "react";
-
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { Trash } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 export default function CartItems({
   cartItems,
   updateQuantity,
   removeFromCart,
-  total,
+  removeSelectedItems,
+  selectedItems,
+  toggleSelectAll,
+  toggleItem,
 }) {
+  const navigate = useNavigate();
   return (
-    <div className="lg:col-span-2 flex flex-col gap-6 sm:max-h-[calc(100vh-200px)] sm:overflow-y-auto hide-scrollbar">
+    <div className="w-full lg:col-span-2 flex flex-col gap-6 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
+      <div className="flex justify-between items-center h-4">
+        <Checkbox
+          checked={
+            selectedItems.length === cartItems.length && cartItems.length > 0
+          }
+          indeterminate={
+            selectedItems.length > 0 && selectedItems.length < cartItems.length
+          }
+          onChange={toggleSelectAll}
+        >
+          Chọn Tất cả
+        </Checkbox>
+
+        {selectedItems.length > 0 && (
+          <span
+            className="text-gray-400 italic cursor-pointer hover:underline"
+            onClick={removeSelectedItems}
+          >
+            Xoá sản phẩm đã chọn
+          </span>
+        )}
+      </div>
+
       {cartItems.map((item, index) => (
         <div
           key={index}
-          className="relative flex items-center justify-between sm:gap-4 py-3 sm:py-0 sm:p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300"
+          className="relative flex flex-row items-center justify-between gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300 "
         >
-          {/* Product Image */}
-          <img
-            src={item.image}
-            alt={item.name}
-            className="w-40 h-40 sm:w-60 sm:h-60 object-contain rounded-lg"
+          <Checkbox
+            checked={selectedItems.includes(index)}
+            onChange={() => toggleItem(index)}
           />
 
-          <article className="w-full flex flex-col md:grid md:grid-cols-2 gap-6">
-            {/* Thông tin sản phẩm */}
+          {/* Product Image */}
+          <Image
+            src={item.image}
+            alt={item.name}
+            className="w-full sm:!w-48 md:!w-40 lg:!w-56 h-auto object-contain rounded-lg"
+            width={100}
+            height={100}
+            preview={false}
+          />
+
+          <article className="w-full flex flex-col gap-6">
+            {/* Product Info */}
             <div className="flex flex-col justify-start">
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 break-words">
-                {item.name}
-              </h2>
-              <p className="mt-2 text-sm md:text-base text-gray-600">
+              <div className="flex justify-between items-center">
+                <h2
+                  className="text-lg sm:text-xl  font-semibold text-gray-900 break-words cursor-pointer hover:text-gray-600"
+                  onClick={() => navigate(`/san-pham/${item.id}`)}
+                >
+                  {item.name}
+                </h2>
+                {/* Remove Button */}
+
+                <Button
+                  type="text"
+                  icon={<Trash size={20} />}
+                  aria-label={`Remove ${item.name} from cart`}
+                  onClick={() => removeFromCart(index)}
+                />
+              </div>
+              <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 <span className="font-medium text-gray-800">Màu sắc:</span>{" "}
                 {item.color}
               </p>
-              <p className="text-sm md:text-base text-gray-600">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 <span className="font-medium text-gray-800">Kích thước:</span>{" "}
-                {item.size}
+                {item.size || "-"}
               </p>
-              <p className="mt-3 text-lg md:text-xl font-semibold text-gray-900">
-                {item.price.toLocaleString()} VND
-              </p>
-            </div>
-
-            {/* Selector & Tổng tiền */}
-            <div className="flex flex-col justify-between">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label
-                  htmlFor={`quantity-${index}`}
-                  className="text-sm md:text-base font-semibold text-gray-600"
-                >
-                  Số lượng
-                </label>
-                <Select
-                  id={`quantity-${index}`}
-                  value={item.quantity}
-                  onChange={(value) => updateQuantity(index, value)}
-                  className="w-full sm:w-24 md:w-32 !text-sm md:!text-base"
-                  aria-label="Chọn số lượng"
-                  disabled={item.quantity >= 10}
-                  size="large"
-                >
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <Select.Option key={i + 1} value={i + 1}>
-                      {i + 1}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-              <div className="mt-4 flex justify-between items-baseline">
-                <span className="uppercase text-sm sm:text-base text-gray-600">
-                  Tổng:{" "}
-                </span>
-                <span className="text-sm sm:text-base font-semibold text-gray-900 block">
-                  {total.toLocaleString()} VND
-                </span>
+              <div className="flex ww-full justify-between items-center">
+                <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
+                  {item.price.toLocaleString()} VND
+                </p>
+                {/* Selector & Total */}
+                <div className="flex flex-col justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        icon={<MinusOutlined />}
+                        onClick={() =>
+                          updateQuantity(index, Math.max(1, item.quantity - 1))
+                        }
+                        disabled={item.quantity <= 1}
+                      />
+                      <InputNumber
+                        id={`quantity-${index}`}
+                        min={1}
+                        value={item.quantity}
+                        onChange={(value) => updateQuantity(index, value)}
+                        className="!text-xs sm:!text-sm md:!text-base !w-10 !text-center !border-none focus:!outline-none focus:!ring-0 focus:!shadow-none !px-0"
+                        aria-label="Chọn số lượng"
+                      />
+                      <Button
+                        icon={<PlusOutlined />}
+                        onClick={() => updateQuantity(index, item.quantity + 1)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </article>
-
-          {/* Remove Button */}
-          <Button
-            type="text"
-            icon={<X size={20} />}
-            onClick={() => removeFromCart(index)}
-            className="absolute top-[-110px] sm:top-[-90px] right-0 text-gray-500 hover:text-gray-800"
-            aria-label={`Remove ${item.name} from cart`}
-          />
         </div>
       ))}
     </div>

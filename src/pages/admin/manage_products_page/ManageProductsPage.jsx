@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { Table, Button, Popconfirm, Space, Image } from "antd";
+import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "../../../hooks/useProducts";
 import { useCategories } from "../../../hooks/useCategories";
 import Loading from "../../../components/Loading";
-import { createProduct } from "../../../services/ProductsServices";
+import {
+  createProduct,
+  updateProduct,
+} from "../../../services/ProductsServices";
 import ProductModal from "./components/Modal/ProductModal";
 import VariantModal from "./components/Modal/VariantModal";
 import { toast } from "react-toastify";
 import { createVariant } from "../../../services/VariantsServices";
-import { formatVND } from "../../../helpers/format";
+import ProductTable from "./components/ProductTable";
 
 export default function ManageProductsPage() {
   const navigate = useNavigate();
@@ -22,49 +25,61 @@ export default function ManageProductsPage() {
   const { products, loading, error, refetch } = useProducts(payload);
   const { categories } = useCategories();
   const [newLoading, setNewLoading] = useState(false);
-  // Modal states
   const [productModalVisible, setProductModalVisible] = useState(false);
   const [variantModalVisible, setVariantModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [editingVariant, setEditingVariant] = useState(null);
   const [currentProductId, setCurrentProductId] = useState(null);
-
+  const [isUnique, setIsUnique] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [fileListVariant, setFileListVariant] = useState([]);
+  const [disabled, setDisabled] = useState(false);
+  const [isClothings, setIsClothings] = useState(false);
   if (loading && !products?.items) return <Loading loading />;
   if (error) navigate("/loi");
+  console.log(editingProduct);
 
-  // Product Handlers
   const handleAddProduct = () => {
     setEditingProduct({});
-    setProductModalVisible(true);
-  };
-
-  const handleEditProduct = (product) => {
-    setEditingProduct(product);
-    setProductModalVisible(true);
-  };
-
-  const handleDeleteProduct = (id) => {
-    // Implement delete logic
-    // deleteProduct.mutate(id, { onSuccess: () => { /* refetch */ } });
+    if (
+      editingProduct === null ||
+      editingProduct === undefined ||
+      editingProduct === ""
+    ) {
+      setProductModalVisible(true);
+      setDisabled(false);
+      setIsUnique(false);
+    }
   };
 
   const handleProductModalSubmit = async (values) => {
     const formData = new FormData();
-
     setNewLoading(true);
 
     if (editingProduct?.id) {
-      // TODO: Thêm xử lý cập nhật sản phẩm
+      const res = await updateProduct(
+        {
+          category_id: values.category_id,
+          name: values.name,
+          description: values.description || "",
+        },
+        editingProduct.id
+      );
+      if (res.status === 200) {
+        toast.success("Cập nhật sản phẩm thành công!");
+        refetch();
+      } else {
+        toast.error(res.message);
+      }
     } else {
       if (values.unique) {
-        if (!values.file?.fileList?.length) {
+        if (!values.file?.length <= 0) {
           toast.error("Vui lòng chọn hình ảnh");
           setNewLoading(false);
           return;
         }
-
         formData.append("name", values.name);
-        formData.append("desc", values.desc || "");
+        formData.append("desc", values.description || "");
         formData.append("category_id", values.category_id);
         formData.append("unique", "true");
         formData.append("stock", values.stock);
@@ -72,14 +87,15 @@ export default function ManageProductsPage() {
           "price",
           values.price ? parseInt(values.price.replace(/\./g, "")) : 0
         );
-        formData.append("file", values.file.fileList[0].originFileObj);
+        fileList.forEach((file) => {
+          formData.append(`file`, file.originFileObj);
+        });
       } else {
         formData.append("name", values.name);
-        formData.append("desc", values.desc || "");
+        formData.append("desc", values.description || "");
         formData.append("category_id", values.category_id);
         formData.append("unique", "false");
       }
-
       try {
         const res = await createProduct(formData);
         if (res.status === 200) {
@@ -92,27 +108,10 @@ export default function ManageProductsPage() {
         toast.error(error.message);
       }
     }
-
     setNewLoading(false);
     setProductModalVisible(false);
     setEditingProduct(null);
-  };
-
-  // Variant Handlers
-  const handleAddVariant = (product) => {
-    setCurrentProductId(product.id);
-    setEditingVariant({});
-    setVariantModalVisible(true);
-  };
-
-  const handleEditVariant = (variant) => {
-    setEditingVariant(variant);
-    setCurrentProductId(variant.product_id);
-    setVariantModalVisible(true);
-  };
-
-  const handleDeleteVariant = (id) => {
-    // Implement delete variant logic
+    setFileList([]);
   };
 
   const handleVariantModalSubmit = async (values) => {
@@ -129,137 +128,54 @@ export default function ManageProductsPage() {
         "price",
         values.price ? parseInt(values.price.replace(/\./g, "")) : 0
       );
-      formData.append("file", values.file.fileList[0].originFileObj);
+      fileListVariant.forEach((file) => {
+        formData.append(`file`, file.originFileObj);
+      });
       formData.append("product_id", currentProductId);
       try {
         const res = await createVariant(formData);
         if (res.status === 200) {
           toast.success("Thêm mẫu mã thành công!");
+          setVariantModalVisible(false);
+          setEditingVariant(null);
+          setCurrentProductId(null);
+          setFileListVariant([]);
           refetch();
         }
       } catch (error) {
-        toast.error(error.message);
+        if (error.status === 400) {
+          toast.error("Mẫu mã đã tồn tại!");
+        } else {
+          toast.error(error.message);
+        }
       }
     }
-    setVariantModalVisible(false);
-    setEditingVariant(null);
-    setCurrentProductId(null);
     setNewLoading(false);
   };
-
-  const columns = [
-    { title: "Tên sản phẩm", dataIndex: "name", sorter: true },
-    { title: "Mô tả", dataIndex: "description" },
-    {
-      title: "Danh mục",
-      dataIndex: "category_id",
-      sorter: true,
-      render: (id) => {
-        const category = categories.find((c) => c.id === id);
-        return <span className="capitalize">{category?.name}</span>;
-      },
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "created_at",
-      sorter: true,
-      render: (date) => new Date(date).toLocaleString("vi-VN"),
-    },
-    {
-      title: "Hành động",
-      key: "actions",
-      render: (_, record) => (
-        <Space>
-          <Button size="small" onClick={() => handleEditProduct(record)}>
-            Sửa
-          </Button>
-          <Popconfirm
-            title="Xóa sản phẩm?"
-            onConfirm={() => handleDeleteProduct(record.id)}
-          >
-            <Button size="small" danger>
-              Xóa
-            </Button>
-          </Popconfirm>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => handleAddVariant(record)}
-          >
-            Thêm mẫu mã
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
-  const variantColumns = [
-    { title: "Màu sắc", dataIndex: "color" },
-    { title: "Kích cỡ", dataIndex: "size" },
-    { title: "Tồn", dataIndex: "stock" },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      sorter: true,
-      render: (price) => formatVND(price),
-    },
-    {
-      title: "Hình ảnh",
-      render: (_, variant) =>
-        variant.images?.map((img) => (
-          <Image key={img.id} src={img.url} width={50} height={50} />
-        )),
-    },
-    {
-      title: "Hành động",
-      key: "variantActions",
-      render: (_, variant) => (
-        <Space>
-          <Button size="small" onClick={() => handleEditVariant(variant)}>
-            Sửa
-          </Button>
-          <Popconfirm
-            title="Xóa variant?"
-            onConfirm={() => handleDeleteVariant(variant.id)}
-          >
-            <Button size="small" danger>
-              Xóa
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
 
   return (
     <div className="p-4">
       <Button
-        type="primary"
+        color="default"
+        variant="solid"
         onClick={handleAddProduct}
         style={{ marginBottom: 16 }}
       >
         Thêm sản phẩm mới
       </Button>
-      <Table
-        dataSource={products?.items}
-        rowKey="id"
-        columns={columns}
-        expandable={{
-          expandedRowRender: (product) => (
-            <Table
-              dataSource={product.variants}
-              rowKey="id"
-              size="middle"
-              columns={variantColumns}
-            />
-          ),
-        }}
-        size="large"
-        pagination={{
-          total: products?.total_items,
-          pageSize: payload.size,
-          onChange: (page) => setPayload((prev) => ({ ...prev, page })),
-        }}
+      <ProductTable
+        products={products}
+        categories={categories}
+        payload={payload}
+        setPayload={setPayload}
+        setEditingProduct={setEditingProduct}
+        setDisabled={setDisabled}
+        setProductModalVisible={setProductModalVisible}
+        setEditingVariant={setEditingVariant}
+        setVariantModalVisible={setVariantModalVisible}
+        setCurrentProductId={setCurrentProductId}
+        setIsClothings={setIsClothings}
+        setIsUnique={setIsUnique}
       />
       <ProductModal
         visible={productModalVisible}
@@ -271,6 +187,11 @@ export default function ManageProductsPage() {
         initialValues={editingProduct}
         categories={categories}
         newLoading={newLoading}
+        isUnique={isUnique}
+        setIsUnique={setIsUnique}
+        fileList={fileList}
+        setFileList={setFileList}
+        disabled={disabled}
       />
       <VariantModal
         visible={variantModalVisible}
@@ -278,10 +199,14 @@ export default function ManageProductsPage() {
           setVariantModalVisible(false);
           setEditingVariant(null);
           setCurrentProductId(null);
+          setIsClothings(false);
         }}
         onOk={handleVariantModalSubmit}
         initialValues={editingVariant}
         newLoading={newLoading}
+        fileListVariant={fileListVariant}
+        setFileListVariant={setFileListVariant}
+        isClothings={isClothings}
       />
     </div>
   );

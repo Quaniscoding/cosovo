@@ -56,3 +56,11 @@
     background-color: #4b5563 !important;
     color: #ffffff !important;
 }
+
+.ant-checkbox-inner {
+    border-radius: 100% !important;
+    background-color: #d7dadd !important;
+    border-color: white !important;
+    width: 20px !important;
+    height: 20px !important;
+}

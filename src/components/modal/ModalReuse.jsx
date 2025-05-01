@@ -43,7 +43,7 @@ export default function ModalReuse({
           onClick={() => form.submit()}
           loading={newLoading}
         >
-          Thêm
+          {initialValues?.id ? "Cập nhật" : "Thêm"}
         </Button>,
       ]}
     >
@@ -121,7 +121,6 @@ export default function ModalReuse({
                 </Form.Item>
               );
             }
-
             // Handle standard input fields
             return (
               <InputField

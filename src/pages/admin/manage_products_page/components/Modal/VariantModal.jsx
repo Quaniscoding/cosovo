@@ -1,6 +1,7 @@
 import React from "react";
 import { Select, Upload } from "antd";
 import ModalReuse from "../../../../../components/modal/ModalReuse";
+import UploadComponent from "../UploadComponent";
 
 const VariantModal = ({
   visible,
@@ -8,6 +9,9 @@ const VariantModal = ({
   onOk,
   initialValues,
   newLoading,
+  fileListVariant,
+  setFileListVariant,
+  isClothings,
 }) => {
   const colorOptions = [
     // Quần áo
@@ -18,6 +22,7 @@ const VariantModal = ({
     { label: "Xanh dương", value: "blue" },
     { label: "Vàng", value: "yellow" },
     { label: "Xanh lá", value: "green" },
+    { label: "Hồng", value: "pink" },
 
     // Thiết bị điện tử
     { label: "Bạc", value: "silver" },
@@ -40,24 +45,28 @@ const VariantModal = ({
       ),
       rules: [{ required: true, message: "Vui lòng chọn màu sắc" }],
     },
-    {
-      name: "size",
-      label: "Kích cỡ",
-      placeholder: "Nhập kích cỡ",
-      component: (
-        <Select
-          placeholder="Chọn kích cỡ"
-          options={[
-            { label: "S", value: "S" },
-            { label: "M", value: "M" },
-            { label: "L", value: "L" },
-            { label: "XL", value: "XL" },
-            { label: "XXL", value: "XXL" },
-          ]}
-        />
-      ),
-      rules: [{ required: true, message: "Vui lòng nhập kích cỡ" }],
-    },
+    ...(isClothings
+      ? [
+          {
+            name: "size",
+            label: "Kích cỡ",
+            placeholder: "Nhập kích cỡ",
+            component: (
+              <Select
+                placeholder="Chọn kích cỡ"
+                options={[
+                  { label: "S", value: "S" },
+                  { label: "M", value: "M" },
+                  { label: "L", value: "L" },
+                  { label: "XL", value: "XL" },
+                  { label: "XXL", value: "XXL" },
+                ]}
+              />
+            ),
+            rules: [{ required: true, message: "Vui lòng nhập kích cỡ" }],
+          },
+        ]
+      : []),
     {
       name: "stock",
       label: "Tồn kho",
@@ -75,35 +84,12 @@ const VariantModal = ({
       name: "file",
       label: "Hình ảnh",
       component: (
-        <Upload.Dragger
-          name="file"
-          beforeUpload={() => false}
-          listType="picture"
-          showUploadList={{
-            showPreviewIcon: true,
-            showRemoveIcon: true,
-          }}
-          style={{ width: "100%" }}
-          maxCount={1}
-          defaultFileList={
-            initialValues?.file?.url
-              ? [
-                  {
-                    uid: "-1",
-                    name: "image.png",
-                    status: "done",
-                    url: initialValues.file.url,
-                  },
-                ]
-              : []
-          }
-        >
-          <p className="ant-upload-text">
-            Nhấn hoặc kéo ảnh vào đây để thêm hình ảnh
-          </p>
-        </Upload.Dragger>
+        <UploadComponent
+          fileList={fileListVariant}
+          setFileList={setFileListVariant}
+        />
       ),
-      rules: [{ required: true, message: "Vui lòng tải lên hình ảnh" }],
+      rules: [{ required: false }],
     },
   ];
 

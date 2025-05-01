@@ -16,3 +16,7 @@ export const createProduct = async (payload) => {
     },
   });
 };
+
+export const updateProduct = async (payload, product_id) => {
+  return http.put(`v1/product/update/${product_id}`, payload);
+};
