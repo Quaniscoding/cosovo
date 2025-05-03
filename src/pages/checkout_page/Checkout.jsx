@@ -176,7 +176,12 @@ export default function Checkout() {
               // >
               //   Lịch sử mua hàng
               // </Button>,
-              <Button type="primary" key="home" onClick={() => navigate("/")}>
+              <Button
+                type="default"
+                variant="solid"
+                key="home"
+                onClick={() => navigate("/")}
+              >
                 Về trang chủ
               </Button>,
             ]}
