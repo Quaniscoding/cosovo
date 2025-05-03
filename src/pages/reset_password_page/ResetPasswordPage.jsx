@@ -41,11 +41,7 @@ export default function ResetPasswordPage() {
   };
 
   if (checkingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <Loading tip="Đang kiểm tra..." />
-      </div>
-    );
+    return <Loading tip="Đang kiểm tra..." />;
   }
 
   return (
@@ -97,7 +93,11 @@ export default function ResetPasswordPage() {
             ]}
           />
           <Form.Item className="mt-4">
-            <ReusableButton type="primary" htmlType="submit" block>
+            <ReusableButton
+              type="primary"
+              htmlType="submit"
+              className="w-full !text-base"
+            >
               Đổi lại mật khẩu
             </ReusableButton>
           </Form.Item>

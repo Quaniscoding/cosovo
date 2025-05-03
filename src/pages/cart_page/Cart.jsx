@@ -3,13 +3,15 @@ import CustomBreadcrumb from "../../components/CustomBreadcrumb";
 import Loading from "../../components/Loading";
 import CartItems from "./CartItems";
 import OrderSummary from "./OrderSummary";
+import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [discountCode, setDiscountCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
-  console.log(cartItems);
+  const [disableCheckout, setDisableCheckout] = useState(true);
+  const navigate = useNavigate();
 
   const toggleItem = (index) => {
     setSelectedItems((prev) =>
@@ -53,6 +55,11 @@ export default function Cart() {
     }, 1000);
   }, []);
 
+  useEffect(() => {
+    // Cập nhật trạng thái disableCheckout dựa trên selectedItems
+    setDisableCheckout(selectedItems.length === 0);
+  }, [selectedItems]);
+
   const removeFromCart = (index) => {
     const updatedCart = cartItems.filter((_, i) => i !== index);
     setCartItems(updatedCart);
@@ -93,12 +100,20 @@ export default function Cart() {
     );
   };
 
+  const handleCheckout = () => {
+    const selectedData = selectedItems.map((i) => cartItems[i]);
+    localStorage.setItem("selectedItems", JSON.stringify(selectedData));
+    navigate("/thanh-toan");
+  };
+
   const total = calculateTotal();
   const shippingFee = 0;
   const finalTotal = total + shippingFee;
+
   if (loading) {
     return <Loading loading={loading} />;
   }
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl text-gray-800 h-screen">
       <CustomBreadcrumb
@@ -137,6 +152,8 @@ export default function Cart() {
             finalTotal={finalTotal}
             discountCode={discountCode}
             setDiscountCode={setDiscountCode}
+            handleCheckout={handleCheckout}
+            disableCheckout={disableCheckout}
           />
         </div>
       )}

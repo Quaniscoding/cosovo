@@ -1,5 +1,5 @@
 import React from "react";
-import { InputNumber, Typography, Divider, Modal } from "antd";
+import { InputNumber, Typography } from "antd";
 import ModalNotification from "./ModalNotification";
 import ReusableButton from "../../components/ui/Button";
 import { colorTranslations } from "../../components/constants/color";
@@ -54,15 +54,16 @@ function ProductInfo({
     <div className="flex flex-col gap-4 sm:gap-6 lg:col-span-6">
       <Title
         level={2}
-        className="text-xl sm:text-2xl md:text-3xl font-semibold"
+        className="text-xl sm:text-2xl md:text-3xl font-semibold text-center !mb-0"
       >
         {product.name}
       </Title>
+      <span className="text-base sm:text-lg lg:text-xl text-black font-bold text-center">
+        {productDetails.price.toLocaleString()} VND
+      </span>
       <Text type="secondary" className="text-sm sm:text-base">
         {product.description || "Không có mô tả"}
       </Text>
-
-      <Divider className="my-2" />
 
       {/* Color Selection */}
       <div className="flex flex-col gap-2">
@@ -74,10 +75,10 @@ function ProductInfo({
                 setSelectedColor(color);
                 setProductDetails((prev) => ({
                   ...prev,
-                  color, // ← thêm dòng này
-                  size: undefined, // ← reset size nếu cần
-                  quantity: 1, // ← reset qty nếu cần
-                  image: colorToImagesMap[color][0], // ← main image
+                  color,
+                  size: undefined,
+                  quantity: 1,
+                  image: colorToImagesMap[color][0],
                 }));
               }}
               className={`w-8 h-8 flex items-center justify-center border rounded-full transition-all duration-300 cursor-pointer
@@ -119,7 +120,6 @@ function ProductInfo({
           </span>
         </div>
       )}
-
       {/* Quantity Input */}
       <div className="flex flex-col items-start gap-4">
         <InputNumber
@@ -139,13 +139,8 @@ function ProductInfo({
 
       {error && <span className="text-sm sm:text-base !h-1">{error}</span>}
 
-      <Divider className="!my-1" />
-
       {/* Price and Add to Cart */}
       <div className="flex flex-col items-start gap-4">
-        <span className="text-lg sm:text-xl lg:text-2xl text-black font-bold">
-          {productDetails.price.toLocaleString()} VND
-        </span>
         <ReusableButton onClick={handleAddAndOpenModal} disabled={isDisabled}>
           {buttonText}
         </ReusableButton>

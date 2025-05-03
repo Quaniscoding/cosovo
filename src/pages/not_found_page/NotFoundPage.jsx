@@ -9,10 +9,10 @@ export default function NotFoundPage() {
       <Result
         status="404"
         title="404"
-        subTitle="Sorry, the page you are looking for does not exist."
+        subTitle="Xin lỗi, trang này không tìm thấy."
         extra={
           <Button type="primary" onClick={() => navigate("/")}>
-            Back to Home
+            Quay lại trang chủ
           </Button>
         }
       />

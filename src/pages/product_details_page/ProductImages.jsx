@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/thumbs";
 
+import { Image } from "antd";
 export default function ProductImages({
   productDetails,
   setProductDetails,
@@ -13,19 +12,15 @@ export default function ProductImages({
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Kiểm tra kích thước màn hình để điều chỉnh layout
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 640);
     };
 
-    // Kiểm tra ban đầu
     checkScreenSize();
 
-    // Theo dõi thay đổi kích thước màn hình
     window.addEventListener("resize", checkScreenSize);
 
-    // Cleanup
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
@@ -43,26 +38,35 @@ export default function ProductImages({
           className="w-full"
           style={{
             // Responsive height cho main swiper
-            height: isMobile ? "300px" : "400px",
+            height: isMobile ? "300px" : "650px",
           }}
           thumbs={{ swiper: thumbsSwiper }}
         >
           {currentImages.map((img, idx) => (
             <SwiperSlide key={idx} className="flex items-center justify-center">
-              <img
-                src={productDetails.image || img}
+              <Image
+                src={productDetails.image}
+                fallback="src/assets/images/noimg.png"
                 alt={`Product Image ${idx + 1}`}
-                className="h-full w-full object-contain md:object-cover rounded-lg cursor-pointer"
+                className="!h-full w-full object-contain rounded-lg cursor-pointer"
                 onClick={() =>
                   setProductDetails((prev) => ({ ...prev, image: img }))
                 }
               />
             </SwiperSlide>
           ))}
+          {currentImages.length === 0 && (
+            <SwiperSlide className="flex items-center justify-center">
+              <img
+                src="/src/assets/images/noimg.png"
+                alt="Product Image"
+                className="!h-full w-full object-contain rounded-lg cursor-pointer"
+              />
+            </SwiperSlide>
+          )}
         </Swiper>
       </div>
 
-      {/* Thumbnails với responsive cho các màn hình khác nhau */}
       <div className={`w-full ${isMobile ? "px-2" : "px-0"}`}>
         <Swiper
           onSwiper={setThumbsSwiper}
@@ -83,7 +87,7 @@ export default function ProductImages({
           {currentImages.map((img, index) => (
             <SwiperSlide key={index} className="p-1 sm:p-2">
               <div
-                className={`aspect-square rounded-md overflow-hidden border ${
+                className={`aspect-square overflow-hidden border ${
                   productDetails.image === img
                     ? "border-blue-500 ring-2 ring-blue-500"
                     : "border-gray-200"

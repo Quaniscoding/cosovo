@@ -1,10 +1,12 @@
 import React from "react";
 import { useCategories } from "../../../hooks/useCategories";
 import { Table } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageCategoriesPage() {
-  const { categories, loading } = useCategories();
-  console.log(categories, loading);
+  const navigate = useNavigate();
+  const { categories, loading, error } = useCategories();
+  if (error) navigate("/loi");
   const columns = [
     {
       title: "ID",

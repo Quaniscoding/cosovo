@@ -24,17 +24,17 @@ const axiosInterceptor = {
       }
     );
 
-    // axios.interceptors.response.use(
-    //   (response) => response,
-    //   (error) => {
-    //     if (error.response?.status === 401) {
-    //       Cookies.remove("token");
-    //       // window.location.href = "/dang-nhap";
-    //       return Promise.reject(error);
-    //     }
-    //     return Promise.reject(error);
-    //   }
-    // );
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Cookies.remove("token");
+          // window.location.href = "/dang-nhap";
+          return Promise.reject(error);
+        }
+        return Promise.reject(error);
+      }
+    );
   },
 };
 

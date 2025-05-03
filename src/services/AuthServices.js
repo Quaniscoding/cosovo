@@ -3,11 +3,11 @@ import http from "./http-common";
 
 export const login = async (payload) => {
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_PUBLIC_API_URL}v1/user/login`,
+    const res = await axios.post(
+      `${import.meta.env.VITE_PUBLIC_API_URL}user/login`,
       payload
     );
-    return response.data;
+    return res.data;
   } catch (error) {
     return error;
   }
@@ -15,8 +15,8 @@ export const login = async (payload) => {
 
 export const resetPassword = async (payload) => {
   try {
-    const response = await http.post(`v1/user/change-password`, payload);
-    return response.data;
+    const res = await http.post(`user/change-password`, payload);
+    return res.data;
   } catch (error) {
     return error;
   }

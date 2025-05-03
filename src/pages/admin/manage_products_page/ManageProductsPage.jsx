@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "antd";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "../../../hooks/useProducts";
 import { useCategories } from "../../../hooks/useCategories";
@@ -10,8 +11,10 @@ import {
 } from "../../../services/ProductsServices";
 import ProductModal from "./components/Modal/ProductModal";
 import VariantModal from "./components/Modal/VariantModal";
-import { toast } from "react-toastify";
-import { createVariant } from "../../../services/VariantsServices";
+import {
+  createVariant,
+  updateVariant,
+} from "../../../services/VariantsServices";
 import ProductTable from "./components/ProductTable";
 
 export default function ManageProductsPage() {
@@ -37,19 +40,11 @@ export default function ManageProductsPage() {
   const [isClothings, setIsClothings] = useState(false);
   if (loading && !products?.items) return <Loading loading />;
   if (error) navigate("/loi");
-  console.log(editingProduct);
 
   const handleAddProduct = () => {
-    setEditingProduct({});
-    if (
-      editingProduct === null ||
-      editingProduct === undefined ||
-      editingProduct === ""
-    ) {
-      setProductModalVisible(true);
-      setDisabled(false);
-      setIsUnique(false);
-    }
+    setProductModalVisible(true);
+    setDisabled(false);
+    setIsUnique(false);
   };
 
   const handleProductModalSubmit = async (values) => {
@@ -119,7 +114,32 @@ export default function ManageProductsPage() {
     setNewLoading(true);
 
     if (editingVariant?.id) {
-      // Update variant logic
+      formData.append("id", editingVariant.id);
+      formData.append("color", values.color);
+      formData.append("size", values.size);
+      formData.append("stock", values.stock);
+      formData.append("price", values.price);
+      fileListVariant.forEach((file) => {
+        formData.append(`file`, file.originFileObj);
+      });
+      formData.append("product_id", currentProductId);
+      try {
+        const res = await updateVariant(formData);
+        if (res.status === 200) {
+          toast.success("Cập nhật mẫu mã thành công!");
+          setVariantModalVisible(false);
+          setEditingVariant(null);
+          setCurrentProductId(null);
+          setFileListVariant([]);
+          refetch();
+        }
+      } catch (error) {
+        if (error.status === 400) {
+          toast.error("Mẫu mã đã tồn tại!");
+        } else {
+          toast.error(error.message);
+        }
+      }
     } else {
       formData.append("color", values.color);
       formData.append("size", values.size);
@@ -176,12 +196,16 @@ export default function ManageProductsPage() {
         setCurrentProductId={setCurrentProductId}
         setIsClothings={setIsClothings}
         setIsUnique={setIsUnique}
+        setFileListVariant={setFileListVariant}
       />
       <ProductModal
         visible={productModalVisible}
         onCancel={() => {
           setProductModalVisible(false);
           setEditingProduct(null);
+          setDisabled(false);
+          setIsUnique(false);
+          setFileList([]);
         }}
         onOk={handleProductModalSubmit}
         initialValues={editingProduct}
@@ -200,6 +224,7 @@ export default function ManageProductsPage() {
           setEditingVariant(null);
           setCurrentProductId(null);
           setIsClothings(false);
+          setFileListVariant([]);
         }}
         onOk={handleVariantModalSubmit}
         initialValues={editingVariant}

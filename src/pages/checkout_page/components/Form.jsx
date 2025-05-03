@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Input, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
-
 import OrderSummary from "./OrderSummary";
 import ReusableButton from "../../../components/ui/Button";
 export default function FormUser({
@@ -11,6 +11,7 @@ export default function FormUser({
   totalAmount,
   loadingQr,
 }) {
+  const navigate = useNavigate();
   return (
     <Form
       form={form}
@@ -31,11 +32,31 @@ export default function FormUser({
           <Input placeholder="Tên khách hàng" allowClear autoComplete="on" />
         </Form.Item>
         <Form.Item
+          label="Email"
+          name="customer_email"
+          rules={[
+            { required: true, message: "Vui lòng nhập email" },
+            { type: "email", message: "Email không hợp lệ" },
+          ]}
+        >
+          <Input placeholder="Email khách hàng" allowClear autoComplete="on" />
+        </Form.Item>
+
+        <Form.Item
           label="Số điện thoại"
           name="customer_phone"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số điện thoại" },
+            {
+              pattern: /^\d{10}$/,
+              message: "Số điện thoại phải gồm đúng 10 chữ số",
+            },
+          ]}
         >
           <Input placeholder="Số điện thoại" allowClear />
+        </Form.Item>
+        <Form.Item label="Ghi chú" name="customer_note">
+          <Input.TextArea rows={3} placeholder="Ghi chú" allowClear />
         </Form.Item>
         <Form.Item
           label="Địa chỉ giao hàng"
@@ -44,17 +65,29 @@ export default function FormUser({
         >
           <Input.TextArea rows={3} placeholder="Địa chỉ" allowClear />
         </Form.Item>
-        <Form.Item>
-          <ReusableButton
-            type="default"
-            color="cyan"
-            htmlType="submit"
-            className="!w-1/2"
-            loading={loadingQr}
-          >
-            Tiếp tục
-          </ReusableButton>
-        </Form.Item>
+        <div className="w-full flex gap-4">
+          <Form.Item>
+            <ReusableButton
+              type="default"
+              variant="secondary"
+              onClick={() => navigate(-1)}
+              className="w-full"
+            >
+              Quay lại
+            </ReusableButton>
+          </Form.Item>
+          <Form.Item>
+            <ReusableButton
+              type="default"
+              variant="primary"
+              htmlType="submit"
+              className="w-full"
+              loading={loadingQr}
+            >
+              Tiếp tục
+            </ReusableButton>
+          </Form.Item>
+        </div>
       </div>
       <OrderSummary cartItems={cartItems} totalAmount={totalAmount} />
     </Form>

@@ -8,6 +8,7 @@ export default function StepOne({
   cartItems,
   setCurrentStep,
   handleCreateOrder,
+  loading,
 }) {
   return (
     <div className="flex flex-col items-center p-4 md:p-6 max-w-6xl">
@@ -22,6 +23,10 @@ export default function StepOne({
       <div className="flex flex-col md:flex-row gap-6 w-full">
         {/* QR Code */}
         <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
+          <Title level={5} type="danger" className="text-center !font-bold">
+            Yêu cầu khách kiểm tra đúng số tiền và đúng tên người nhận Tran Duc
+            Hai
+          </Title>
           <Image src={qrCode} alt="QR Code" className="!w-52 md:!w-64 mb-4" />
           <Text className="text-center text-sm text-gray-500">
             Quét mã bằng app ngân hàng hoặc VNPAY để thanh toán
@@ -43,7 +48,11 @@ export default function StepOne({
             <ReusableButton type="primary" onClick={() => setCurrentStep(0)}>
               Quay lại
             </ReusableButton>
-            <ReusableButton type="secondary" onClick={handleCreateOrder}>
+            <ReusableButton
+              type="secondary"
+              onClick={handleCreateOrder}
+              loading={loading}
+            >
               Đã thanh toán
             </ReusableButton>
           </div>

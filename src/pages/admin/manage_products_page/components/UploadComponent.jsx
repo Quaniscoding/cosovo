@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Upload, Image } from "antd";
 import { getBase64 } from "../../../../helpers/getBase64";
-
+import { normalizeFileImage } from "../../../../helpers/normalizeFileImage";
 export default function UploadComponent({ fileList, setFileList }) {
+  const normalizedFileList = normalizeFileImage(fileList);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -24,7 +25,7 @@ export default function UploadComponent({ fileList, setFileList }) {
         multiple
         beforeUpload={() => false}
         accept="image/*"
-        fileList={fileList}
+        fileList={normalizedFileList}
         onChange={handleChange}
         onPreview={handlePreview}
         showUploadList={{
@@ -48,6 +49,7 @@ export default function UploadComponent({ fileList, setFileList }) {
             afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
           src={previewImage}
+          loading="lazy"
         />
       )}
     </>

@@ -2,6 +2,7 @@ import React from "react";
 import { Select, Upload } from "antd";
 import ModalReuse from "../../../../../components/modal/ModalReuse";
 import UploadComponent from "../UploadComponent";
+import { colorOptions } from "../../../../../constants/colors";
 
 const VariantModal = ({
   visible,
@@ -13,23 +14,6 @@ const VariantModal = ({
   setFileListVariant,
   isClothings,
 }) => {
-  const colorOptions = [
-    // Quần áo
-    { label: "Đen", value: "black" },
-    { label: "Trắng", value: "white" },
-    { label: "Xám", value: "gray" },
-    { label: "Đỏ", value: "red" },
-    { label: "Xanh dương", value: "blue" },
-    { label: "Vàng", value: "yellow" },
-    { label: "Xanh lá", value: "green" },
-    { label: "Hồng", value: "pink" },
-
-    // Thiết bị điện tử
-    { label: "Bạc", value: "silver" },
-    { label: "Vàng đồng", value: "bronze" },
-    { label: "Xanh rêu", value: "army_green" },
-  ];
-
   const variantFields = [
     {
       name: "color",
@@ -102,6 +86,7 @@ const VariantModal = ({
       onCancel={onCancel}
       onOk={onOk}
       newLoading={newLoading}
+      width={600}
     />
   );
 };

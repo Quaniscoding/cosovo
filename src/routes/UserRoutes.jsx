@@ -14,8 +14,8 @@ const UserRoutes = () => (
       <Route path="/" element={<HomePage />} />
       <Route path="/san-pham/:id" element={<ProductDetails />} />
       <Route path="/gio-hang" element={<Cart />} />
-      <Route path="/thanh-toan" element={<Checkout />} />
     </Route>
+    <Route path="/thanh-toan" element={<Checkout />} />
     <Route path="/dang-nhap" element={<LoginPage />} />
     <Route path="*" element={<NotFoundPage />} />
     <Route path="/loi" element={<ErrorPage />} />

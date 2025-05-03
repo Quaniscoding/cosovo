@@ -15,7 +15,7 @@ export default function CartItems({
   const navigate = useNavigate();
   return (
     <div className="w-full lg:col-span-2 flex flex-col gap-6 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
-      <div className="flex justify-between items-center h-4">
+      <div className="flex justify-between items-center h-6">
         <Checkbox
           checked={
             selectedItems.length === cartItems.length && cartItems.length > 0

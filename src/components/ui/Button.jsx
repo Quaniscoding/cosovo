@@ -13,6 +13,7 @@ export default function ReusableButton({
 
   const baseStyles = `
     py-2 sm:py-2 md:py-2 
+    min-h-[48px]
     px-4 
     text-sm sm:text-base md:text-lg 
     uppercase font-semibold 
@@ -28,7 +29,7 @@ export default function ReusableButton({
       : "bg-black hover:bg-gray-800 text-white",
     secondary: isDisabled
       ? "bg-white border border-gray-300 text-gray-400"
-      : "bg-white hover:text-gray-400 text-black border-2 border-black",
+      : "bg-white hover:text-gray-400 text-black border-1 border-black",
   };
 
   return (
@@ -38,7 +39,9 @@ export default function ReusableButton({
       className={`${baseStyles} ${variants[variant]} ${className}`}
       disabled={isDisabled}
     >
-      {loading ? <LoadingOutlined spin className="text-lg" /> : children}
+      <span className="flex items-center justify-center w-full">
+        {loading ? <LoadingOutlined spin className="text-lg" /> : children}
+      </span>
     </button>
   );
 }

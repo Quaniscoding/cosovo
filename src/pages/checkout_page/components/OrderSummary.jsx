@@ -37,21 +37,22 @@ const OrderSummary = ({ cartItems, totalAmount }) => {
                   <Text>
                     Màu: {colorTranslations[cart.color] || cart.color}
                   </Text>
-                  {!cart.isElectronics && (
-                    <Text>Size: {(cart?.size || []).join(", ")}</Text>
-                  )}
+                  {!cart.isElectronics && <Text>Size: {cart.size}</Text>}
                   <Text>Số lượng: {cart.quantity}</Text>
                 </div>
               </div>
               <div className="text-right pr-4">
-                <Title level={3} className="!font-semibold">
-                  Tổng: {totalAmount.toLocaleString()} VND
+                <Title level={4} className="!font-semibold">
+                  Tổng: {(cart.price * cart.quantity)?.toLocaleString()} VND
                 </Title>
               </div>
             </Card>
           </List.Item>
         )}
       />
+      <Title level={3} className="!font-semibold !text-end">
+        Tổng: {totalAmount?.toLocaleString()} VND
+      </Title>
     </div>
   );
 };

@@ -2,7 +2,6 @@
 import { Divider, Typography } from "antd";
 import React from "react";
 import ReusableButton from "../../components/ui/Button";
-import { useNavigate } from "react-router-dom";
 const { Text } = Typography;
 
 export default function OrderSummary({
@@ -11,11 +10,12 @@ export default function OrderSummary({
   finalTotal,
   discountCode,
   setDiscountCode,
+  handleCheckout,
+  disableCheckout,
 }) {
-  const navigate = useNavigate();
   return (
     <div className="lg:col-span-1 h-full">
-      <div className="flex flex-col gap-4 p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+      <div className="flex flex-col gap-4 p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
         <span className="text-base sm:text-xl font-semibold text-gray-900">
           TỔNG ĐƠN HÀNG | {cartItems.length} SẢN PHẨM
         </span>
@@ -28,21 +28,13 @@ export default function OrderSummary({
         </div>
 
         <Divider className="my-4 border-gray-300" />
-        <ReusableButton
-          onClick={() => {
-            navigate("/thanh-toan");
-          }}
-        >
+        <ReusableButton onClick={handleCheckout} disabled={disableCheckout}>
           Thanh toán
         </ReusableButton>
 
         <ReusableButton variant="secondary">
           <a href="/">Tiếp tục mua sắm</a>
         </ReusableButton>
-        <Text className="text-xs sm:text-sm text-gray-500 mt-4 block text-center">
-          Miễn phí vận chuyển áp dụng cho đơn hàng từ 500,000VND và tất cả các
-          đơn nhận tại cửa hàng. (Click & Collect).
-        </Text>
       </div>
     </div>
   );

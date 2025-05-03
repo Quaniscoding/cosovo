@@ -1,66 +1,47 @@
-/* eslint-disable no-empty-pattern */
-import { Search, ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Badge, Tooltip } from "antd";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { CartContext } from "../../../contexts/CartContext";
-import InputSearch from "./InputSearch";
-import { useProducts } from "../../../hooks/useProducts";
 
 const Header = () => {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [payload, setPayload] = useState({
-    search: "",
-  });
-  const {} = useProducts(payload);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-  };
   const { cartItems } = useContext(CartContext);
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
+    <header
+      className="fixed top-0 left-0 w-full z-50 bg-gray-50 border-b border-gray-200"
+      style={{
+        boxShadow:
+          "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 flex items-center h-16 relative">
         {/* Left */}
         <div className="flex items-center w-auto">
-          {searchOpen ? (
-            <button onClick={() => setSearchOpen(false)} className="mr-2">
-              <ArrowLeft size={24} className="text-gray-800" />
-            </button>
-          ) : (
-            <a href="/" className="text-2xl font-bold text-gray-800">
-              COSOVO
-            </a>
-          )}
+          <a href="/" className="flex items-center">
+            <img
+              src="/src/assets/images/logo.ico"
+              alt="logo"
+              className="w-10 h-10 object-contain"
+            />
+            <div className="flex flex-col leading-tight">
+              <span className="text-xl font-extrabold text-black tracking-wide">
+                COSOVO
+              </span>
+              <span className="text-[12px] text-gray-500 mt-[-7px]">
+                www.cosovo.vn
+              </span>
+            </div>
+          </a>
         </div>
-
-        {/* Center */}
-        <InputSearch
-          searchOpen={searchOpen}
-          payload={payload}
-          setPayload={setPayload}
-          handleSearch={handleSearch}
-        />
-
         {/* Right */}
-        {!searchOpen && (
-          <div className="flex items-center ml-auto space-x-4">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="block md:hidden"
-            >
-              <Tooltip title="Tìm kiếm" placement="bottom">
-                <Search size={24} className="text-gray-800" />
+        <div className="flex items-center ml-auto space-x-4 gap-4">
+          <Badge count={cartItems.reduce((sum, i) => sum + i.quantity, 0)}>
+            <a href="/gio-hang" className="relative cursor-pointer">
+              <Tooltip title="Giỏ hàng" placement="bottom">
+                <ShoppingCart size={30} className="text-gray-800" />
               </Tooltip>
-            </button>
-            <Badge count={cartItems.reduce((sum, i) => sum + i.quantity, 0)}>
-              <a href="/gio-hang" className="relative cursor-pointer">
-                <Tooltip title="Giỏ hàng" placement="bottom">
-                  <ShoppingCart size={24} className="text-gray-800" />
-                </Tooltip>
-              </a>
-            </Badge>
-          </div>
-        )}
+            </a>
+          </Badge>
+        </div>
       </div>
     </header>
   );

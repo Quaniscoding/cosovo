@@ -18,8 +18,10 @@ export default function Checkout() {
   const [orderPayload, setOrderPayload] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [loadingQr, setLoadingQr] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const stored = localStorage.getItem("cart");
+    const stored = localStorage.getItem("selectedItems");
 
     let cartData = [];
 
@@ -28,20 +30,19 @@ export default function Checkout() {
         const parsed = JSON.parse(stored);
         cartData = Array.isArray(parsed) ? parsed : [parsed];
       } catch (e) {
-        console.error("Invalid cart JSON", e);
+        console.error("Invalid selectedItems JSON", e);
       }
     }
 
     setCartItems(cartData);
 
-    // Hiển thị loading tối thiểu 2s
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
 
-    // Clear timeout nếu component unmount
     return () => clearTimeout(timer);
   }, []);
+
   useEffect(() => {
     const savedData = localStorage.getItem("checkoutForm");
     if (savedData) {
@@ -54,7 +55,6 @@ export default function Checkout() {
     }
   }, [form]);
 
-  const navigate = useNavigate();
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -94,26 +94,31 @@ export default function Checkout() {
       console.error("QR error:", error);
       console.error("Đã xảy ra lỗi khi tạo mã QR");
     } finally {
-      setLoadingQr(false); // Dừng loading
+      setLoadingQr(false);
     }
   };
 
   const handleCreateOrder = async () => {
     try {
-      const res = await createOrder(orderPayload);
+      setLoading(true);
+      const res = await createOrder({ ...orderPayload, status: "customer" });
       if (res.status === 201) {
         setCurrentStep(2);
+        localStorage.removeItem("selectedItems");
         localStorage.removeItem("cart");
       }
     } catch (err) {
-      console.log("Error creating order:", err);
+      setLoading(false);
+      console.error("Error creating order:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   if (loading) return <Loading loading={loading} />;
 
   if (!cartItems.length) {
-    return <Text>Không có sản phẩm trong giỏ hàng.</Text>;
+    return navigate("/");
   }
 
   return (
@@ -145,6 +150,7 @@ export default function Checkout() {
             cartItems={cartItems}
             totalAmount={totalAmount}
             loadingQr={loadingQr}
+            loading={loading}
           />
         )}
 
@@ -164,12 +170,12 @@ export default function Checkout() {
             title="Đơn hàng đã được tạo thành công!"
             subTitle="Kiểm tra thông tin đơn hàng ở trong lịch sử mua hàng."
             extra={[
-              <Button
-                key="history"
-                onClick={() => navigate("/lich-su-mua-hang")}
-              >
-                Lịch sử mua hàng
-              </Button>,
+              // <Button
+              //   key="history"
+              //   onClick={() => navigate("/lich-su-mua-hang")}
+              // >
+              //   Lịch sử mua hàng
+              // </Button>,
               <Button type="primary" key="home" onClick={() => navigate("/")}>
                 Về trang chủ
               </Button>,

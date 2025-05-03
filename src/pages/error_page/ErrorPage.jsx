@@ -1,19 +1,14 @@
 import React from "react";
-import { Button, Result } from "antd";
-import ReusableButton from "../../components/ui/Button";
+import { Result } from "antd";
+
 const ErrorPage = () => (
-  <Result
-    status="500"
-    title="500"
-    subTitle="Xin lỗi, đã xảy ra lỗi máy chủ."
-    extra={
-      <ReusableButton className="!w-52" variant="primary">
-        <a href="/" className="!text-white">
-          {" "}
-          Quay lại trang chủ
-        </a>
-      </ReusableButton>
-    }
-  />
+  <div className="flex items-center justify-center h-screen">
+    <Result
+      status="500"
+      title="500"
+      subTitle="Xin lỗi, đã xảy ra lỗi máy chủ. Chúng tôi sẽ khắc phục ngay."
+    />
+  </div>
 );
+
 export default ErrorPage;

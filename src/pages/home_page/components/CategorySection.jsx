@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Skeleton } from "antd";
-import { useCategories } from "../../hooks/useCategories";
+import { useCategories } from "../../../hooks/useCategories";
+import { categoryLabels } from "../../../constants/categories";
 
 const CategorySection = ({ onCategoryChange }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -11,14 +12,6 @@ const CategorySection = ({ onCategoryChange }) => {
   };
 
   const { categories, loading } = useCategories({});
-
-  const categoryLabels = {
-    clothing: "Quần áo",
-    electronics: "Đồ điện tử",
-    furniture: "Đồ nội thất",
-    accessories: "Phụ kiện",
-    shoes: "Giày dép",
-  };
 
   const displayCategories = [
     { label: "Tất cả", value: "" },

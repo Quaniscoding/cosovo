@@ -1,4 +1,6 @@
 import "../src/styles/App.css";
+import "../src/styles/antdCss.css";
+
 import AdminRoutes from "./routes/AdminRoutes.jsx";
 import { Route, Routes } from "react-router-dom";
 import RequireAuth from "./routes/RequireAuth.jsx";
@@ -16,5 +18,4 @@ function App() {
     </CartProvider>
   );
 }
-
 export default App;

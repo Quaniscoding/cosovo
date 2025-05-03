@@ -2,15 +2,15 @@
 import http from "./http-common";
 
 export const getProducts = async (payload) => {
-  return http.post("v1/product/get-all", payload);
+  return http.post("product/get-all", payload);
 };
 
 export const getProductsDetails = async (id) => {
-  return http.get(`v1/product/get/${id}`);
+  return http.get(`product/get/${id}`);
 };
 
 export const createProduct = async (payload) => {
-  return http.post("v1/product/create", payload, {
+  return http.post("product/create", payload, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -18,5 +18,5 @@ export const createProduct = async (payload) => {
 };
 
 export const updateProduct = async (payload, product_id) => {
-  return http.put(`v1/product/update/${product_id}`, payload);
+  return http.put(`product/update/${product_id}`, payload);
 };

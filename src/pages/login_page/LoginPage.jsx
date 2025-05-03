@@ -11,7 +11,7 @@ import Loading from "../../components/Loading";
 export default function LoginPage() {
   const navigate = useNavigate();
   const [checkingAuth, setCheckingAuth] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
@@ -23,25 +23,30 @@ export default function LoginPage() {
 
   const onFinish = async (values) => {
     try {
+      setLoading(true);
       const result = await login(values);
-      if (result.token) {
+      if (result.data.token) {
         toast.success(result.message || "Đăng nhập thành công!");
-        Cookies.set("token", result.token, {
+        Cookies.set("token", result.data.token, {
           expires: 7,
           secure: true,
           sameSite: "Strict",
           path: "/",
         });
-
         navigate("/admin");
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
       }
       if (result.status === 401) {
         toast.error(result.response.data.error);
+        setLoading(false);
+
         return;
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message || "Đăng nhập thất bại");
-      console.error("Login error:", error);
     }
   };
 
@@ -75,7 +80,12 @@ export default function LoginPage() {
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
           />
           <Form.Item className="mt-4">
-            <ReusableButton type="primary" htmlType="submit" block>
+            <ReusableButton
+              variant="primary"
+              type="submit"
+              className="w-full !text-base"
+              loading={loading}
+            >
               Đăng nhập
             </ReusableButton>
           </Form.Item>

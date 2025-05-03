@@ -1,6 +1,7 @@
 import { Select, Switch } from "antd";
 import ModalReuse from "../../../../../components/modal/ModalReuse";
 import UploadComponent from "../UploadComponent";
+import { categoryLabels } from "../../../../../constants/categories";
 const ProductModal = ({
   visible,
   onCancel,
@@ -32,7 +33,10 @@ const ProductModal = ({
       component: (
         <Select
           placeholder="Chọn danh mục"
-          options={categories.map((c) => ({ label: c.name, value: c.id }))}
+          options={categories.map((c) => ({
+            label: categoryLabels[c.name] || c.name,
+            value: c.id,
+          }))}
         />
       ),
       rules: [{ required: true, message: "Vui lòng chọn danh mục" }],
@@ -90,6 +94,7 @@ const ProductModal = ({
       onCancel={onCancel}
       onOk={onOk}
       newLoading={newLoading}
+      width={600}
     />
   );
 };

@@ -53,21 +53,6 @@ export default function InputSearch({
           </div>
         </div>
       )}
-      {/* {payload.search && (
-        <div className="w-full absolute top-16 bg-white shadow-md rounded-lg p-4">
-          <div className="flex flex-col space-y-2">
-            <a href="/san-pham-1" className="text-gray-800 hover:text-blue-500">
-              Sản phẩm 1
-            </a>
-            <a href="/san-pham-2" className="text-gray-800 hover:text-blue-500">
-              Sản phẩm 2
-            </a>
-            <a href="/san-pham-3" className="text-gray-800 hover:text-blue-500">
-              Sản phẩm 3
-            </a>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

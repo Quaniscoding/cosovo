@@ -1,0 +1,12 @@
+export const heroSlides = [
+  {
+    bg: "bg-gradient-to-b from-gray-200 to-gray-400",
+    text: "Thương Hiệu Uy Tín Và Support Tốt Nhất",
+    textColor: "text-gray-800",
+  },
+  {
+    bg: "bg-gradient-to-b from-gray-300 to-gray-500",
+    text: "Mua Danh 3 Vạn Bán Danh 3 Đồng",
+    textColor: "text-gray-900",
+  },
+];

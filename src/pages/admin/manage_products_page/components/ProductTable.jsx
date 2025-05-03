@@ -3,6 +3,7 @@ import ActionButtons from "./ActionButtons.jsx";
 import { formatVND } from "../../../../helpers/format";
 import { categoriesTranslations } from "../../../../components/constants/categories.js";
 import { colorTranslations } from "../../../../components/constants/color.js";
+import moment from "moment";
 
 const ProductTable = ({
   products,
@@ -16,6 +17,7 @@ const ProductTable = ({
   setCurrentProductId,
   setDisabled,
   setIsClothings,
+  setFileListVariant,
 }) => {
   const columns = [
     { title: "Tên sản phẩm", dataIndex: "name", sorter: true, width: 200 },
@@ -44,7 +46,7 @@ const ProductTable = ({
       dataIndex: "created_at",
       sorter: true,
       width: 160,
-      render: (date) => new Date(date).toLocaleString("vi-VN"),
+      render: (text) => moment(text).format("HH:mm DD/MM/YYYY"),
     },
     {
       title: "Hành động",
@@ -109,7 +111,14 @@ const ProductTable = ({
       width: 160,
       render: (_, variant) =>
         variant.images?.map((img) => (
-          <Image key={img.id} src={img.url} width={40} height={40} />
+          <Image
+            key={img.id}
+            src={img.url}
+            width={40}
+            height={40}
+            loading="lazy"
+            rootClassName="mr-2"
+          />
         )),
     },
     {
@@ -132,7 +141,7 @@ const ProductTable = ({
               } else {
                 setIsClothings(false);
               }
-
+              setFileListVariant(variant.images);
               setEditingVariant(variant);
               setCurrentProductId(variant.product_id);
               setVariantModalVisible(true);

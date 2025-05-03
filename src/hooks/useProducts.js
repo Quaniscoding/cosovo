@@ -18,8 +18,8 @@ export function useProducts(payload) {
 
   const refetch = () => {
     const key = JSON.stringify(debouncedPayload);
-    delete cache.current[key]; // Xóa cache cho payload hiện tại
-    setRefetchKey((prev) => prev + 1); // Trigger lại useEffect
+    delete cache.current[key];
+    setRefetchKey((prev) => prev + 1);
   };
 
   useEffect(() => {
