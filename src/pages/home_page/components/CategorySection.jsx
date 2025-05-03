@@ -16,7 +16,7 @@ const CategorySection = ({ onCategoryChange }) => {
   const displayCategories = [
     { label: "Tất cả", value: "" },
     ...categories.map((cat) => {
-      const normalizedCategory = cat.name.toLowerCase();
+      const normalizedCategory = cat.name;
       const label = categoryLabels[normalizedCategory];
 
       return {
