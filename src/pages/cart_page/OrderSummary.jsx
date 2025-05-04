@@ -11,7 +11,6 @@ export default function OrderSummary({
   discountCode,
   setDiscountCode,
   handleCheckout,
-  disableCheckout,
 }) {
   return (
     <div className="lg:col-span-1 h-full">
@@ -28,9 +27,7 @@ export default function OrderSummary({
         </div>
 
         <Divider className="my-4 border-gray-300" />
-        <ReusableButton onClick={handleCheckout} disabled={disableCheckout}>
-          Thanh toán
-        </ReusableButton>
+        <ReusableButton onClick={handleCheckout}>Thanh toán</ReusableButton>
 
         <ReusableButton variant="secondary">
           <a href="/">Tiếp tục mua sắm</a>

@@ -21,7 +21,7 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem("selectedItems");
+    const stored = localStorage.getItem("cart");
 
     let cartData = [];
 
@@ -30,7 +30,7 @@ export default function Checkout() {
         const parsed = JSON.parse(stored);
         cartData = Array.isArray(parsed) ? parsed : [parsed];
       } catch (e) {
-        console.error("Invalid selectedItems JSON", e);
+        console.error("Invalid cart JSON", e);
       }
     }
 
@@ -104,7 +104,7 @@ export default function Checkout() {
       const res = await createOrder({ ...orderPayload, status: "customer" });
       if (res.status === 201) {
         setCurrentStep(2);
-        localStorage.removeItem("selectedItems");
+        localStorage.removeItem("cart");
         localStorage.removeItem("cart");
       }
     } catch (err) {

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Image, InputNumber } from "antd";
+import { Button, Image, InputNumber } from "antd";
 import React from "react";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Trash } from "lucide-react";
@@ -7,47 +7,15 @@ export default function CartItems({
   cartItems,
   updateQuantity,
   removeFromCart,
-  removeSelectedItems,
-  selectedItems,
-  toggleSelectAll,
-  toggleItem,
 }) {
   const navigate = useNavigate();
   return (
     <div className="w-full lg:col-span-2 flex flex-col gap-6 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
-      <div className="flex justify-between items-center h-6">
-        <Checkbox
-          checked={
-            selectedItems.length === cartItems.length && cartItems.length > 0
-          }
-          indeterminate={
-            selectedItems.length > 0 && selectedItems.length < cartItems.length
-          }
-          onChange={toggleSelectAll}
-        >
-          Chọn Tất cả
-        </Checkbox>
-
-        {selectedItems.length > 0 && (
-          <span
-            className="text-gray-400 italic cursor-pointer hover:underline"
-            onClick={removeSelectedItems}
-          >
-            Xoá sản phẩm đã chọn
-          </span>
-        )}
-      </div>
-
       {cartItems.map((item, index) => (
         <div
           key={index}
           className="relative flex flex-row items-center justify-between gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-300 "
         >
-          <Checkbox
-            checked={selectedItems.includes(index)}
-            onChange={() => toggleItem(index)}
-          />
-
           {/* Product Image */}
           <Image
             src={item.image}

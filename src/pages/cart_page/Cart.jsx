@@ -9,32 +9,7 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [discountCode, setDiscountCode] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [disableCheckout, setDisableCheckout] = useState(true);
   const navigate = useNavigate();
-
-  const toggleItem = (index) => {
-    setSelectedItems((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedItems.length === cartItems.length) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(cartItems.map((_, i) => i));
-    }
-  };
-
-  const removeSelectedItems = () => {
-    const updatedCart = cartItems.filter(
-      (_, index) => !selectedItems.includes(index)
-    );
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    setSelectedItems([]);
-  };
 
   useEffect(() => {
     const fetchCart = () => {
@@ -54,11 +29,6 @@ export default function Cart() {
       setLoading(false);
     }, 1000);
   }, []);
-
-  useEffect(() => {
-    // Cập nhật trạng thái disableCheckout dựa trên selectedItems
-    setDisableCheckout(selectedItems.length === 0);
-  }, [selectedItems]);
 
   const removeFromCart = (index) => {
     const updatedCart = cartItems.filter((_, i) => i !== index);
@@ -101,8 +71,6 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
-    const selectedData = selectedItems.map((i) => cartItems[i]);
-    localStorage.setItem("selectedItems", JSON.stringify(selectedData));
     navigate("/thanh-toan");
   };
 
@@ -138,11 +106,6 @@ export default function Cart() {
             cartItems={cartItems}
             updateQuantity={updateQuantity}
             removeFromCart={removeFromCart}
-            total={total}
-            selectedItems={selectedItems}
-            toggleItem={toggleItem}
-            toggleSelectAll={toggleSelectAll}
-            removeSelectedItems={removeSelectedItems}
           />
 
           {/* Order Summary */}
@@ -153,7 +116,6 @@ export default function Cart() {
             discountCode={discountCode}
             setDiscountCode={setDiscountCode}
             handleCheckout={handleCheckout}
-            disableCheckout={disableCheckout}
           />
         </div>
       )}
