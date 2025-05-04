@@ -42,7 +42,7 @@ export default function CartItems({
                   type="text"
                   icon={<Trash size={20} />}
                   aria-label={`Remove ${item.name} from cart`}
-                  onClick={() => removeFromCart(index)}
+                  onClick={() => removeFromCart(item)}
                 />
               </div>
               <p className="text-xs sm:text-sm md:text-base text-gray-600">
@@ -64,7 +64,7 @@ export default function CartItems({
                       <Button
                         icon={<MinusOutlined />}
                         onClick={() =>
-                          updateQuantity(index, Math.max(1, item.quantity - 1))
+                          updateQuantity(item, Math.max(1, item.quantity - 1))
                         }
                         disabled={item.quantity <= 1}
                       />
@@ -72,13 +72,13 @@ export default function CartItems({
                         id={`quantity-${index}`}
                         min={1}
                         value={item.quantity}
-                        onChange={(value) => updateQuantity(index, value)}
+                        onChange={(value) => updateQuantity(item, value)}
                         className="!text-xs sm:!text-sm md:!text-base !w-10 !text-center !border-none focus:!outline-none focus:!ring-0 focus:!shadow-none !px-0"
                         aria-label="Chọn số lượng"
                       />
                       <Button
                         icon={<PlusOutlined />}
-                        onClick={() => updateQuantity(index, item.quantity + 1)}
+                        onClick={() => updateQuantity(item, item.quantity + 1)}
                       />
                     </div>
                   </div>

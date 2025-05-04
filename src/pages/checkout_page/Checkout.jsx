@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Form, Typography, Steps, Button, Result } from "antd";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../../services/OrderServices";
@@ -6,12 +6,14 @@ import { createQrCode } from "../../services/QrServices";
 import FormUser from "./components/Form";
 import Loading from "../../components/Loading";
 import StepOne from "./components/StepOne";
+import { CartContext } from "../../contexts/CartContext";
+import { bankAccountConfig } from "../../components/constants/bankAccountConfig";
 
 const { Title, Text } = Typography;
 const { Step } = Steps;
 
 export default function Checkout() {
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, clearCart } = useContext(CartContext);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
@@ -21,25 +23,9 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem("cart");
-
-    let cartData = [];
-
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        cartData = Array.isArray(parsed) ? parsed : [parsed];
-      } catch (e) {
-        console.error("Invalid cart JSON", e);
-      }
-    }
-
-    setCartItems(cartData);
-
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
-
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -61,12 +47,9 @@ export default function Checkout() {
   );
 
   const dataBankAccount = {
-    accountNo: "0291000155301",
-    accountName: "TRAN DUC HAI",
-    acqId: "970436",
+    ...bankAccountConfig,
     addInfo: `CHUYEN TIEN ${cartItems[0]?.name}`,
     amount: totalAmount.toString(),
-    template: "compact",
   };
 
   const handleFinishStep1 = async (values) => {
@@ -104,8 +87,7 @@ export default function Checkout() {
       const res = await createOrder({ ...orderPayload, status: "customer" });
       if (res.status === 201) {
         setCurrentStep(2);
-        localStorage.removeItem("cart");
-        localStorage.removeItem("cart");
+        clearCart(); // Xóa giỏ hàng qua context
       }
     } catch (err) {
       setLoading(false);
@@ -170,12 +152,6 @@ export default function Checkout() {
             title="Đơn hàng đã được tạo thành công!"
             subTitle="Kiểm tra thông tin đơn hàng ở trong lịch sử mua hàng."
             extra={[
-              // <Button
-              //   key="history"
-              //   onClick={() => navigate("/lich-su-mua-hang")}
-              // >
-              //   Lịch sử mua hàng
-              // </Button>,
               <Button
                 type="default"
                 variant="solid"

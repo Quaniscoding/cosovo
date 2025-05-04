@@ -42,12 +42,13 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="font-semibold mb-2">Về chúng tôi</h3>
+          <p>Hải Cosovo - Since 2007</p>
           <p>Chuyên cung cấp thiết bị điện tử & đồ gia dụng chính hãng.</p>
-          <p>Uy tín - Tận tâm - Hỗ trợ nhanh chóng.</p>
+          <p>Uy tín - Tận Tâm - Chính hãng.</p>
         </div>
       </div>
       <div className="text-center py-3 border-t border-gray-200 text-gray-500">
-        © {new Date().getFullYear()} Hải Cosovo. All rights reserved.
+        © {new Date().getFullYear()} Hải Cosovo. All rights reserved. Since 2007
       </div>
     </footer>
   );

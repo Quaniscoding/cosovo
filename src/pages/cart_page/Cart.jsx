@@ -1,66 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import CustomBreadcrumb from "../../components/CustomBreadcrumb";
-import Loading from "../../components/Loading";
 import CartItems from "./CartItems";
 import OrderSummary from "./OrderSummary";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../../contexts/CartContext";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, deleteFromCart, clearCart, addToCart } =
+    useContext(CartContext);
   const [discountCode, setDiscountCode] = useState("");
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCart = () => {
-      const storedCart = localStorage.getItem("cart");
-      if (storedCart) {
-        const parsedCart = JSON.parse(storedCart);
-        const mergedCart = mergeDuplicateItems(parsedCart);
-        setCartItems(mergedCart);
-        localStorage.setItem("cart", JSON.stringify(mergedCart));
-      }
-    };
-
-    // Giả lập loading 1s
-    setLoading(true);
-    setTimeout(() => {
-      fetchCart();
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const removeFromCart = (index) => {
-    const updatedCart = cartItems.filter((_, i) => i !== index);
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  const removeFromCart = (item) => {
+    deleteFromCart(item);
   };
 
-  const mergeDuplicateItems = (items) => {
-    const merged = [];
-
-    for (const item of items) {
-      const key = `${item.id}-${item.color}-${item.size}`;
-      const existingIndex = merged.findIndex(
-        (i) => `${i.id}-${i.color}-${i.size}` === key
-      );
-
-      if (existingIndex !== -1) {
-        merged[existingIndex].quantity += item.quantity;
-      } else {
-        merged.push({ ...item });
-      }
-    }
-
-    return merged;
+  const handleClearCart = () => {
+    clearCart();
   };
 
-  const updateQuantity = (index, newQuantity) => {
+  const updateQuantity = (item, newQuantity) => {
     if (newQuantity < 1) return;
-    const updatedCart = [...cartItems];
-    updatedCart[index].quantity = newQuantity;
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    deleteFromCart(item);
+    const newItem = { ...item, quantity: newQuantity };
+    addToCart(newItem);
   };
 
   const calculateTotal = () => {
@@ -77,10 +40,6 @@ export default function Cart() {
   const total = calculateTotal();
   const shippingFee = 0;
   const finalTotal = total + shippingFee;
-
-  if (loading) {
-    return <Loading loading={loading} />;
-  }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl text-gray-800 h-screen">
@@ -116,6 +75,7 @@ export default function Cart() {
             discountCode={discountCode}
             setDiscountCode={setDiscountCode}
             handleCheckout={handleCheckout}
+            handleClearCart={handleClearCart}
           />
         </div>
       )}
