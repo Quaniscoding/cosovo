@@ -18,7 +18,7 @@ const Header = () => {
         <div className="flex items-center w-auto">
           <a href="/" className="flex items-center">
             <img
-              src="/src/assets/images/logo.ico"
+              src="src/assets/images/logo.ico"
               alt="logo"
               className="w-10 h-10 object-contain"
             />
