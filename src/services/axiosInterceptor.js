@@ -28,8 +28,8 @@ const axiosInterceptor = {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          // Cookies.remove("token");
-          // window.location.href = "/dang-nhap";
+          Cookies.remove("token");
+          window.location.href = "/dang-nhap";
           return Promise.reject(error);
         }
         return Promise.reject(error);
