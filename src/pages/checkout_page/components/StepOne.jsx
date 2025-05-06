@@ -113,7 +113,7 @@ export default function StepOne({
           </Title>
           <div className="space-y-2 text-sm md:text-base">
             <p>
-              <strong>Ngân hàng:</strong> Vietombank (970436)
+              <strong>Ngân hàng:</strong> Vietcombank
             </p>
             <p>
               <strong>Tên tài khoản:</strong> TRAN DUC HAI
