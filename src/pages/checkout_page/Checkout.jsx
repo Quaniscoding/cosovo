@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { Form, Typography, Steps, Button, Result } from "antd";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../../services/OrderServices";
@@ -8,8 +8,9 @@ import Loading from "../../components/Loading";
 import StepOne from "./components/StepOne";
 import { CartContext } from "../../contexts/CartContext";
 import { bankAccountConfig } from "../../components/constants/bankAccountConfig";
+import { toast } from "react-toastify";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Step } = Steps;
 
 export default function Checkout() {
@@ -22,85 +23,99 @@ export default function Checkout() {
   const [loadingQr, setLoadingQr] = useState(false);
   const navigate = useNavigate();
 
+  // Parse localStorage data safely
+  const parsedData = useMemo(() => {
+    try {
+      const saved = localStorage.getItem("checkoutForm");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Set loading false after short delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
+  // Prefill form if data exists
   useEffect(() => {
-    const savedData = localStorage.getItem("checkoutForm");
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        form.setFieldsValue(parsedData);
-      } catch (err) {
-        console.error("Invalid saved form data", err);
-      }
+    if (parsedData) {
+      form.setFieldsValue(parsedData);
     }
-  }, [form]);
+  }, [form, parsedData]);
 
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
+  // Calculate total amount
+  const totalAmount = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cartItems]
   );
 
-  const dataBankAccount = {
-    ...bankAccountConfig,
-    addInfo: `CHUYEN TIEN ${cartItems[0]?.name}`,
-    amount: totalAmount.toString(),
-  };
+  // Prepare bank account data
+  const dataBankAccount = useMemo(() => {
+    if (!parsedData) return null;
+    return {
+      ...bankAccountConfig,
+      addInfo: `${parsedData.customer_name || ""} ${
+        parsedData.customer_phone || ""
+      }`,
+      amount: totalAmount.toString(),
+    };
+  }, [parsedData, totalAmount]);
 
-  const handleFinishStep1 = async (values) => {
-    const items = cartItems.map((item) => ({
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-    }));
+  // Handle step 1 finish
+  const handleFinishStep1 = useCallback(
+    async (values) => {
+      const items = cartItems.map((item) => ({
+        variant_id: item.variant_id,
+        quantity: item.quantity,
+      }));
+      const orderData = { ...values, items };
+      setOrderPayload(orderData);
+      setLoadingQr(true);
 
-    const orderData = { ...values, items };
-    setOrderPayload(orderData);
-
-    setLoadingQr(true);
-
-    try {
-      const createQr = await createQrCode(dataBankAccount);
-
-      if (createQr.status === 200) {
-        const qrCodeData = createQr.data.data.qrDataURL;
-        setQrCode(qrCodeData);
-        setCurrentStep(1);
-      } else {
-        console.error("Có lỗi khi tạo mã QR");
+      try {
+        if (!dataBankAccount)
+          throw new Error("Thiếu thông tin tài khoản ngân hàng");
+        const createQr = await createQrCode(dataBankAccount);
+        if (createQr.status === 200) {
+          setQrCode(createQr.data.data.qrDataURL);
+          setCurrentStep(1);
+        } else {
+          toast.error(createQr.message);
+        }
+      } catch (error) {
+        toast.error(error.message || "Tạo QR code thất bại");
+      } finally {
+        setLoadingQr(false);
       }
-    } catch (error) {
-      console.error("QR error:", error);
-      console.error("Đã xảy ra lỗi khi tạo mã QR");
-    } finally {
-      setLoadingQr(false);
-    }
-  };
+    },
+    [cartItems, dataBankAccount]
+  );
 
-  const handleCreateOrder = async () => {
+  // Handle order creation
+  const handleCreateOrder = useCallback(async () => {
     try {
       setLoading(true);
       const res = await createOrder({ ...orderPayload, status: "customer" });
       if (res.status === 201) {
         setCurrentStep(2);
-        clearCart(); // Xóa giỏ hàng qua context
+        clearCart();
       }
-    } catch (err) {
-      setLoading(false);
-      console.error("Error creating order:", err);
+    } catch {
+      toast.error("Tạo đơn hàng thất bại");
+      setCurrentStep(0);
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderPayload, clearCart]);
 
   if (loading) return <Loading loading={loading} />;
 
   if (!cartItems.length) {
-    return navigate("/");
+    navigate("/");
+    return null;
   }
 
   return (
@@ -143,6 +158,7 @@ export default function Checkout() {
             cartItems={cartItems}
             setCurrentStep={setCurrentStep}
             handleCreateOrder={handleCreateOrder}
+            handleFinishStep1={handleFinishStep1}
           />
         )}
 

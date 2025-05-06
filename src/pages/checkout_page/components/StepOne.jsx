@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Button, Divider, Image, Typography } from "antd";
 import ReusableButton from "../../../components/ui/Button";
 const { Title, Text } = Typography;
@@ -9,7 +10,28 @@ export default function StepOne({
   setCurrentStep,
   handleCreateOrder,
   loading,
+  handleFinishStep1,
 }) {
+  const [expired, setExpired] = useState(false);
+  const timerRef = useRef();
+
+  const [reloadCount, setReloadCount] = useState(0);
+
+  useEffect(() => {
+    setExpired(false);
+    timerRef.current = setTimeout(() => {
+      setExpired(true);
+    }, 60000);
+
+    return () => clearTimeout(timerRef.current);
+  }, [qrCode, handleFinishStep1, reloadCount]);
+
+  const handleReload = () => {
+    setExpired(false);
+    setReloadCount((c) => c + 1);
+    handleFinishStep1();
+  };
+
   return (
     <div className="flex flex-col items-center p-4 md:p-6 max-w-6xl">
       {/* Tổng thanh toán */}
@@ -27,7 +49,33 @@ export default function StepOne({
             Yêu cầu khách kiểm tra đúng số tiền và đúng tên người nhận Tran Duc
             Hai
           </Title>
-          <Image src={qrCode} alt="QR Code" className="!w-52 md:!w-64 mb-4" />
+          <div className="relative flex flex-col items-center">
+            <Image
+              src={qrCode}
+              alt="QR Code"
+              className={`!w-52 md:!w-64 mb-4 transition-all duration-300 ${
+                expired ? "opacity-40 blur-sm" : ""
+              }`}
+              preview={false}
+            />
+            {expired && (
+              <>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="bg-opacity-80 text-red-600 font-semibold px-4 py-2 rounded">
+                    QR đã hết hạn, vui lòng tải lại
+                  </span>
+                </div>
+                <Button
+                  type="primary"
+                  size="small"
+                  className="absolute bottom-2 right-2"
+                  onClick={handleReload}
+                >
+                  Tải lại QR
+                </Button>
+              </>
+            )}
+          </div>
           <Text className="text-center text-sm text-gray-500">
             Quét mã bằng app ngân hàng hoặc VNPAY để thanh toán
           </Text>
@@ -65,7 +113,7 @@ export default function StepOne({
           </Title>
           <div className="space-y-2 text-sm md:text-base">
             <p>
-              <strong>Ngân hàng:</strong> VietinBank (970436)
+              <strong>Ngân hàng:</strong> Vietombank (970436)
             </p>
             <p>
               <strong>Tên tài khoản:</strong> TRAN DUC HAI
@@ -74,7 +122,7 @@ export default function StepOne({
               <strong>Số tài khoản:</strong> 0291000155301
             </p>
             <p>
-              <strong>Nội dung chuyển khoản:</strong> CHUYENTIEN + SĐT
+              <strong>Nội dung chuyển khoản:</strong> HOTEN + SĐT
             </p>
             <p>
               <strong>Số tiền:</strong> {totalAmount.toLocaleString()}₫
