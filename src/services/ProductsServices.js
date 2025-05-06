@@ -20,3 +20,7 @@ export const createProduct = async (payload) => {
 export const updateProduct = async (payload, product_id) => {
   return http.put(`product/update/${product_id}`, payload);
 };
+
+export const deleteProduct = async (id) => {
+  return http.patch(`product/delete/${id}`);
+};

@@ -7,12 +7,14 @@ import { useCategories } from "../../../hooks/useCategories";
 import Loading from "../../../components/Loading";
 import {
   createProduct,
+  deleteProduct,
   updateProduct,
 } from "../../../services/ProductsServices";
 import ProductModal from "./components/Modal/ProductModal";
 import VariantModal from "./components/Modal/VariantModal";
 import {
   createVariant,
+  deleteVariant,
   updateVariant,
 } from "../../../services/VariantsServices";
 import ProductTable from "./components/ProductTable";
@@ -172,7 +174,32 @@ export default function ManageProductsPage() {
     }
     setNewLoading(false);
   };
-
+  const handleDeleteProduct = async (id) => {
+    try {
+      const res = await deleteProduct(id);
+      if (res.status === 200) {
+        toast.success("Xóa sản phẩm thành công!");
+        refetch();
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const handleDeleteVariant = async (id) => {
+    try {
+      const res = await deleteVariant(id);
+      if (res.status === 200) {
+        toast.success("Xóa mẫu má thành công!");
+        refetch();
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div className="p-4">
       <Button
@@ -197,6 +224,8 @@ export default function ManageProductsPage() {
         setIsClothings={setIsClothings}
         setIsUnique={setIsUnique}
         setFileListVariant={setFileListVariant}
+        handleDeleteProduct={handleDeleteProduct}
+        handleDeleteVariant={handleDeleteVariant}
       />
       <ProductModal
         visible={productModalVisible}

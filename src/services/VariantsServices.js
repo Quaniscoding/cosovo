@@ -25,3 +25,12 @@ export const updateVariant = async (payload) => {
     return error;
   }
 };
+
+export const deleteVariant = async (id) => {
+  try {
+    const res = http.delete(`variant/delete/${id}`);
+    return res;
+  } catch (error) {
+    return error;
+  }
+};

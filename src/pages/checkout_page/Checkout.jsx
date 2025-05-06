@@ -33,26 +33,22 @@ export default function Checkout() {
     }
   }, []);
 
-  // Set loading false after short delay
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Prefill form if data exists
   useEffect(() => {
     if (parsedData) {
       form.setFieldsValue(parsedData);
     }
   }, [form, parsedData]);
 
-  // Calculate total amount
   const totalAmount = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cartItems]
   );
 
-  // Prepare bank account data
   const dataBankAccount = useMemo(() => {
     if (!parsedData) return null;
     return {
@@ -64,7 +60,6 @@ export default function Checkout() {
     };
   }, [parsedData, totalAmount]);
 
-  // Handle step 1 finish
   const handleFinishStep1 = useCallback(
     async (values) => {
       const items = cartItems.map((item) => ({
@@ -94,7 +89,6 @@ export default function Checkout() {
     [cartItems, dataBankAccount]
   );
 
-  // Handle order creation
   const handleCreateOrder = useCallback(async () => {
     try {
       setLoading(true);

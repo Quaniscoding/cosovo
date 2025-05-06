@@ -18,6 +18,8 @@ const ProductTable = ({
   setDisabled,
   setIsClothings,
   setFileListVariant,
+  handleDeleteProduct,
+  handleDeleteVariant,
 }) => {
   const columns = [
     { title: "Tên sản phẩm", dataIndex: "name", sorter: true, width: 200 },
@@ -60,9 +62,7 @@ const ProductTable = ({
             setProductModalVisible(true);
             setDisabled(true);
           }}
-          onDelete={() => {
-            // delete product
-          }}
+          onDelete={() => handleDeleteProduct(record.id)}
           onAddVariant={() => {
             const category = categories.find(
               (c) => c.id === record.category_id
@@ -153,7 +153,7 @@ const ProductTable = ({
           <Popconfirm
             title="Xóa mẫu mã?"
             onConfirm={() => {
-              // delete variant
+              handleDeleteVariant(variant.id);
             }}
           >
             <Button size="small" danger>
