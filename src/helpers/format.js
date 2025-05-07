@@ -1,5 +1,6 @@
 // helpers/format.js
 
 export const formatVND = (price) => {
-  return price.toLocaleString("vi-VN") + " ₫";
+  if (price === undefined || price === null || isNaN(price)) return "0 ₫";
+  return Number(price).toLocaleString("vi-VN") + " ₫";
 };

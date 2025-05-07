@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../contexts/CartContext";
 
 export default function Cart() {
-  const { cartItems, deleteFromCart, clearCart, addToCart } =
+  const { cartItems, deleteFromCart, clearCart, updateCartItem } =
     useContext(CartContext);
   const [discountCode, setDiscountCode] = useState("");
   const navigate = useNavigate();
@@ -21,9 +21,7 @@ export default function Cart() {
 
   const updateQuantity = (item, newQuantity) => {
     if (newQuantity < 1) return;
-    deleteFromCart(item);
-    const newItem = { ...item, quantity: newQuantity };
-    addToCart(newItem);
+    updateCartItem(item, newQuantity);
   };
 
   const calculateTotal = () => {

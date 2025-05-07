@@ -153,8 +153,6 @@ export default function ModalReuse({
                 );
               }
             )}
-
-            {/* Right: Custom component (sản phẩm/variant) */}
           </Form>
         </Col>
         <Col span={12}>{component}</Col>

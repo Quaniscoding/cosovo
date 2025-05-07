@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
         <a href={`/san-pham/${product.id}`}>
           <img
             src={firstImage}
-            alt={product.name}
+            alt={product?.name}
             className="absolute top-0 left-0 w-full h-full object-contain m-auto"
             loading="lazy"
           />
@@ -27,14 +27,14 @@ const ProductCard = ({ product }) => {
             href={`/san-pham/${product.id}`}
             className="uppercase text-[#3d4246] inline hover:border-b hover:border-[#3d4246]"
           >
-            {product.name}
+            {product?.name}
           </a>
         </h3>
       </div>
       <div id="price" className="relative">
         <div className="text-base h-8 w-full transition-all ease-[.3s]">
           <span className="font-bold text-black leading-[30px]">
-            {formatVND(firstVariant.price)}
+            {formatVND(firstVariant?.price)}
           </span>
         </div>
       </div>

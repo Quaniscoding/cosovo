@@ -1,9 +1,9 @@
 import { Table, Button, Popconfirm, Space, Image } from "antd";
+import moment from "moment";
 import ActionButtons from "./ActionButtons.jsx";
 import { formatVND } from "../../../../helpers/format";
 import { categoriesTranslations } from "../../../../components/constants/categories.js";
 import { colorTranslations } from "../../../../components/constants/color.js";
-import moment from "moment";
 
 const ProductTable = ({
   products,

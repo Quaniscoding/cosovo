@@ -11,5 +11,4 @@ export const colorTranslations = {
   orange: "Cam",
   brown: "Nâu",
   purple: "Tím",
-  // Thêm các màu khác nếu cần
 };

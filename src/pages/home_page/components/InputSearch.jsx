@@ -17,7 +17,7 @@ export default function InputSearch({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Tìm gian hàng hoặc sản phẩm"
+            placeholder="Tìm sản phẩm"
             value={payload.search}
             onChange={(e) => setPayload({ ...payload, search: e.target.value })}
             className="w-full py-3 px-4 rounded-full border border-gray-200 text-gray-700 focus:border-gray-400 focus:!outline-none  font-semibold"
@@ -34,7 +34,7 @@ export default function InputSearch({
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Tìm gian hàng hoặc sản phẩm"
+              placeholder="Tìm sản phẩm"
               value={payload.search}
               onChange={(e) =>
                 setPayload({ ...payload, search: e.target.value })

@@ -84,7 +84,16 @@ export default function OverViewPage() {
       }));
     }
   };
-
+  const handleReset = () => {
+    setPayload((p) => ({
+      ...p,
+      startDate: null,
+      endDate: null,
+      page: 1,
+    }));
+    setSelectedWeek(null);
+    setSelectedMonth(null);
+  };
   if (loadingPage) return <Loading loading={loadingPage} />;
   return (
     <div>
@@ -117,20 +126,7 @@ export default function OverViewPage() {
           />
         </Col>
         <Col>
-          <Button
-            onClick={() => {
-              setPayload((p) => ({
-                ...p,
-                startDate: null,
-                endDate: null,
-                page: 1,
-              }));
-              setSelectedWeek(null);
-              setSelectedMonth(null);
-            }}
-          >
-            Xóa lọc ngày
-          </Button>
+          <Button onClick={handleReset}>Xóa lọc</Button>
         </Col>
       </Row>
       <Table
