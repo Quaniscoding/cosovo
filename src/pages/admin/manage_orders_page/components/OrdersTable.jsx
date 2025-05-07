@@ -14,7 +14,7 @@ export default function OrdersTable({
   handleDeleteOrder,
   handlePrepareOrder,
 }) {
-  console.log(orders);
+  // console.log(orders);
 
   const columns = [
     {
@@ -79,9 +79,9 @@ export default function OrdersTable({
   const itemColumns = [
     {
       title: "Tên sản phẩm",
-      key: "product_name",
+      key: ["variant", "product", "name"],
       width: 150,
-      render: (product) => (product.name ? product.name : "Không tìm thấy"),
+      render: (product, record) => record.variant.product.name,
     },
     {
       title: "Màu sắc",
