@@ -3,7 +3,6 @@ import moment from "moment";
 import ActionButtons from "./ActionButtons.jsx";
 import { formatVND } from "../../../../helpers/format";
 import { categoriesTranslations } from "../../../../components/constants/categories.js";
-import { colorTranslations } from "../../../../components/constants/color.js";
 
 const ProductTable = ({
   products,
@@ -77,7 +76,7 @@ const ProductTable = ({
       title: "Màu sắc",
       dataIndex: "color",
       width: 100,
-      render: (color) => <span>{colorTranslations[color] || color}</span>,
+      render: (color) => <span> {color}</span>,
     },
     {
       title: "Kích cỡ",

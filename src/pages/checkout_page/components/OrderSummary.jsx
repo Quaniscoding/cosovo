@@ -1,6 +1,5 @@
 import { Button, Card, List, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { colorTranslations } from "../../../components/constants/color";
 const { Title, Text } = Typography;
 
 const OrderSummary = ({ cartItems, totalAmount }) => {
@@ -34,9 +33,7 @@ const OrderSummary = ({ cartItems, totalAmount }) => {
                 <div className="flex-1 flex flex-col justify-between">
                   <Title level={5}>{cart.name}</Title>
                   <Text>Giá: {cart.price?.toLocaleString()} VND</Text>
-                  <Text>
-                    Màu: {colorTranslations[cart.color] || cart.color}
-                  </Text>
+                  <Text>Màu: {cart.color}</Text>
                   {!cart.isElectronics && <Text>Size: {cart.size}</Text>}
                   <Text>Số lượng: {cart.quantity}</Text>
                 </div>
