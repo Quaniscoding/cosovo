@@ -4,7 +4,7 @@ import { formatVND } from "../../../helpers/format";
 const ProductCard = ({ product }) => {
   const firstVariant = product.variants[0];
   const firstImage =
-    firstVariant?.images?.[0]?.url || "src/assets/images/noimg.png";
+    firstVariant?.images?.[0]?.url || "/public/assets/images/noimg.png";
 
   return (
     <div className=" text-center rounded-lg hover:shadow-lg transition duration-300">
