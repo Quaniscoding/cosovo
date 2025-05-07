@@ -41,6 +41,7 @@ function ProductInfo({
   let buttonText = "Thêm vào giỏ hàng";
   if (outOfStock) buttonText = "Hết hàng";
   else if (overQuantity) buttonText = "Vượt quá tồn kho";
+  else if (selectedColor === "") buttonText = "Chọn màu";
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6 lg:col-span-6">
@@ -60,29 +61,21 @@ function ProductInfo({
       {/* Color Selection */}
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 sm:gap-3">
-          {Object.keys(colorToImagesMap).map((color) => (
-            <button
-              key={color}
-              onClick={() => {
-                setSelectedColor(color);
-                setProductDetails((prev) => ({
-                  ...prev,
-                  color,
-                  size: undefined,
-                  quantity: 1,
-                  image: colorToImagesMap[color][0],
-                }));
-              }}
-              className={`w-8 h-8 flex items-center justify-center border rounded-full transition-all duration-300 cursor-pointer
-      ${
-        selectedColor === color
-          ? "ring-2 ring-black scale-110 shadow-md border-black"
-          : "bg-gray-100 text-gray-800"
-      }`}
-              style={{ backgroundColor: color }}
-              title={color}
-            ></button>
-          ))}
+          <div className="flex gap-2 sm:gap-3">
+            {Object.keys(colorToImagesMap).map((color) => (
+              <span
+                className={`capitalize border p-2 cursor-pointer transition-all duration-150 ${
+                  selectedColor === color
+                    ? "border-gray-600 bg-gray-200 font-semibold scale-105"
+                    : "border-gray-300"
+                }`}
+                onClick={() => setSelectedColor(color)}
+                key={color}
+              >
+                {color === "def" ? "Mặc định" : color}
+              </span>
+            ))}
+          </div>
         </div>
         <span className="text-sm sm:text-base text-gray-400">
           Màu: {selectedColor === "default" ? "Mặc định" : selectedColor}
