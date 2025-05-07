@@ -1,8 +1,7 @@
-import { Select, Table, Tag } from "antd";
+import { Image, Select, Table, Tag } from "antd";
 import moment from "moment";
 import React from "react";
 import ActionButtons from "./ActionButtons";
-import { colorTranslations } from "../../../../components/constants/color";
 import {
   orderStatusOptions,
   preparedOptions,
@@ -12,10 +11,11 @@ export default function OrdersTable({
   orders,
   payload,
   setPayload,
-  categories,
   handleDeleteOrder,
   handlePrepareOrder,
 }) {
+  console.log(orders);
+
   const columns = [
     {
       title: "Tên khách hàng",
@@ -79,30 +79,30 @@ export default function OrdersTable({
   const itemColumns = [
     {
       title: "Tên sản phẩm",
-      dataIndex: ["variant", "product", "name"],
       key: "product_name",
       width: 150,
+      render: (product) => (product.name ? product.name : "Không tìm thấy"),
     },
     {
       title: "Màu sắc",
       dataIndex: ["variant", "color"],
       width: 100,
-      render: (color) => <span>{colorTranslations[color] || color}</span>,
+      render: (color) => (
+        <span>
+          {color === "def" ? "Mặc định" : color ? color : "Không tìm thấy"}
+        </span>
+      ),
     },
     {
       title: "Kích cỡ",
       dataIndex: ["variant", "size"],
       width: 100,
-      render: (size, record) => {
-        const categoryName = categories
-          ?.find((cat) => cat.id === record?.variant?.product?.category_id)
-          ?.name?.toLowerCase();
-
-        if (categoryName === "clothing") {
-          return <span className="font-semibold">{size}</span>;
-        } else {
-          return <span className="italic">Không áp dụng</span>;
-        }
+      render: (size) => {
+        return (
+          <span className="font-semibold">
+            {size ? size : "Không tìm thấy"}
+          </span>
+        );
       },
     },
     {
@@ -125,10 +125,10 @@ export default function OrdersTable({
       key: "image",
       width: 100,
       render: (images) => (
-        <img
-          src={images?.[0]?.url}
+        <Image
+          src={images?.[0]?.url || "/assets/images/noimg.png"}
           alt="product"
-          className="w-16 h-16 object-cover rounded"
+          className="!w-16 !h-16 object-cover rounded"
         />
       ),
     },

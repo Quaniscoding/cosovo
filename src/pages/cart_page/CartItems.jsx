@@ -47,11 +47,11 @@ export default function CartItems({
               </div>
               <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 <span className="font-medium text-gray-800">Màu sắc:</span>{" "}
-                {item.color}
+                {item.color === "def" ? "Mặc định" : item.color}
               </p>
               <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 <span className="font-medium text-gray-800">Kích thước:</span>{" "}
-                {item.size || "-"}
+                {item.size}
               </p>
               <div className="flex ww-full justify-between items-center">
                 <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">

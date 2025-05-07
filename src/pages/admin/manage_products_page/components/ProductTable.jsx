@@ -16,7 +16,6 @@ const ProductTable = ({
   setVariantModalVisible,
   setCurrentProductId,
   setDisabled,
-  setIsClothings,
   setFileListVariant,
   handleDeleteProduct,
   handleDeleteVariant,
@@ -64,13 +63,6 @@ const ProductTable = ({
           }}
           onDelete={() => handleDeleteProduct(record.id)}
           onAddVariant={() => {
-            const category = categories.find(
-              (c) => c.id === record.category_id
-            );
-            if (category.name === "Clothing") {
-              setIsClothings(true);
-            }
-
             setCurrentProductId(record.id);
             setEditingVariant({});
             setVariantModalVisible(true);
@@ -91,12 +83,7 @@ const ProductTable = ({
       title: "Kích cỡ",
       dataIndex: "size",
       width: 100,
-      render: (size, variant) =>
-        variant.isClothing ? (
-          <span className="font-semibold">{size}</span>
-        ) : (
-          <span className="italic">Không áp dụng</span>
-        ),
+      render: (size) => <span className="font-semibold">{size}</span>,
     },
     { title: "Tồn", dataIndex: "stock", width: 80 },
     {
@@ -130,17 +117,6 @@ const ProductTable = ({
           <Button
             size="small"
             onClick={() => {
-              const product = products?.items?.find(
-                (p) => p.id === variant.product_id
-              );
-              const category = categories.find(
-                (c) => c.id === product?.category_id
-              );
-              if (category?.name === "Clothing") {
-                setIsClothings(true);
-              } else {
-                setIsClothings(false);
-              }
               setFileListVariant(variant.images);
               setEditingVariant(variant);
               setCurrentProductId(variant.product_id);

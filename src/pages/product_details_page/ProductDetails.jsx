@@ -30,15 +30,12 @@ export default function ProductDetails() {
   });
   const [selectedColor, setSelectedColor] = useState("");
   const colorToImagesMap = product?.variants.reduce((acc, variant) => {
-    if (variant.images.length > 0) {
-      acc[variant.color] = variant.images.map((img) => img.url);
-    }
+    acc[variant.color] = variant.images.map((img) => img.url);
     return acc;
   }, {});
   const currentCategory = categories.find(
     (cat) => cat.id === product?.category_id
   );
-  const isElectronics = currentCategory?.name?.toLowerCase() === "electronics";
   useEffect(() => {
     if (product) {
       const defaultVariant = product.variants[0];
@@ -50,11 +47,10 @@ export default function ProductDetails() {
         price: defaultVariant?.price || 0,
         stock: defaultVariant?.stock || 0,
         variant_id: defaultVariant?.id || null,
-        isElectronics: isElectronics,
       });
       setSelectedColor(defaultVariant?.color || "");
     }
-  }, [product, isElectronics]);
+  }, [product]);
 
   if (loading || !product) {
     return <Loading loading={loading} />;
@@ -68,27 +64,16 @@ export default function ProductDetails() {
           variant.size === productDetails.size
       ) || product.variants[0];
 
-    if (
-      (!isElectronics && (!productDetails.color || !productDetails.size)) ||
-      (isElectronics && !productDetails.color)
-    ) {
-      setError(
-        "Vui lòng chọn màu sắc" + (isElectronics ? "." : " và kích thước.")
-      );
-      return false;
-    }
-
     setError(null);
     addToCart({
       id: product.id,
       name: product.name,
       price: productDetails.price,
       color: productDetails.color,
-      size: isElectronics ? null : productDetails.size,
+      size: productDetails.size,
       quantity: productDetails.quantity,
       image: selectedVariant.images[0]?.url || "",
       variant_id: selectedVariant.id,
-      isElectronics: isElectronics,
     });
     return true;
   };
@@ -143,7 +128,6 @@ export default function ProductDetails() {
           error={error}
           setError={setError}
           currentCategory={currentCategory}
-          isElectronics={isElectronics}
           setSelectedColor={setSelectedColor}
           colorToImagesMap={colorToImagesMap}
           selectedColor={selectedColor}

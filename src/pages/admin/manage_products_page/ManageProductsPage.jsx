@@ -39,7 +39,6 @@ export default function ManageProductsPage() {
   const [fileList, setFileList] = useState([]);
   const [fileListVariant, setFileListVariant] = useState([]);
   const [disabled, setDisabled] = useState(false);
-  const [isClothings, setIsClothings] = useState(false);
   if (loading && !products?.items) return <Loading loading />;
   if (error) navigate("/loi");
 
@@ -115,10 +114,13 @@ export default function ManageProductsPage() {
     const formData = new FormData();
     setNewLoading(true);
 
+    const color = values.color ? values.color : "def";
+    const size = values.size ? values.size : "os";
+
     if (editingVariant?.id) {
       formData.append("id", editingVariant.id);
-      formData.append("color", values.color);
-      formData.append("size", values.size);
+      formData.append("color", color);
+      formData.append("size", size);
       formData.append("stock", values.stock);
       formData.append("price", values.price);
       fileListVariant.forEach((file) => {
@@ -143,8 +145,8 @@ export default function ManageProductsPage() {
         }
       }
     } else {
-      formData.append("color", values.color);
-      formData.append("size", values.size);
+      formData.append("color", color);
+      formData.append("size", size);
       formData.append("stock", values.stock);
       formData.append(
         "price",
@@ -221,7 +223,6 @@ export default function ManageProductsPage() {
         setEditingVariant={setEditingVariant}
         setVariantModalVisible={setVariantModalVisible}
         setCurrentProductId={setCurrentProductId}
-        setIsClothings={setIsClothings}
         setIsUnique={setIsUnique}
         setFileListVariant={setFileListVariant}
         handleDeleteProduct={handleDeleteProduct}
@@ -252,7 +253,6 @@ export default function ManageProductsPage() {
           setVariantModalVisible(false);
           setEditingVariant(null);
           setCurrentProductId(null);
-          setIsClothings(false);
           setFileListVariant([]);
         }}
         onOk={handleVariantModalSubmit}
@@ -260,7 +260,6 @@ export default function ManageProductsPage() {
         newLoading={newLoading}
         fileListVariant={fileListVariant}
         setFileListVariant={setFileListVariant}
-        isClothings={isClothings}
       />
     </div>
   );

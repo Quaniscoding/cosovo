@@ -2,7 +2,6 @@ import React from "react";
 import { Select, Upload } from "antd";
 import ModalReuse from "../../../../../components/modal/ModalReuse";
 import UploadComponent from "../UploadComponent";
-import { colorOptions } from "../../../../../constants/colors";
 
 const VariantModal = ({
   visible,
@@ -12,45 +11,20 @@ const VariantModal = ({
   newLoading,
   fileListVariant,
   setFileListVariant,
-  isClothings,
 }) => {
   const variantFields = [
     {
       name: "color",
       label: "Màu sắc",
-      placeholder: "Chọn màu sắc",
-      component: (
-        <Select
-          placeholder="Chọn màu sắc"
-          showSearch
-          optionFilterProp="label"
-          options={colorOptions}
-        />
-      ),
-      rules: [{ required: true, message: "Vui lòng chọn màu sắc" }],
+      placeholder: "Nhập màu sắc",
+      rules: [{ required: false }],
     },
-    ...(isClothings
-      ? [
-          {
-            name: "size",
-            label: "Kích cỡ",
-            placeholder: "Nhập kích cỡ",
-            component: (
-              <Select
-                placeholder="Chọn kích cỡ"
-                options={[
-                  { label: "S", value: "S" },
-                  { label: "M", value: "M" },
-                  { label: "L", value: "L" },
-                  { label: "XL", value: "XL" },
-                  { label: "XXL", value: "XXL" },
-                ]}
-              />
-            ),
-            rules: [{ required: true, message: "Vui lòng nhập kích cỡ" }],
-          },
-        ]
-      : []),
+    {
+      name: "size",
+      label: "Kích cỡ",
+      placeholder: "Nhập kích cỡ",
+      rules: [{ required: false }],
+    },
     {
       name: "stock",
       label: "Tồn kho",

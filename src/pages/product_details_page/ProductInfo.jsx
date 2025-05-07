@@ -2,7 +2,6 @@ import React from "react";
 import { InputNumber, Typography } from "antd";
 import ModalNotification from "./ModalNotification";
 import ReusableButton from "../../components/ui/Button";
-import { colorTranslations } from "../../components/constants/color";
 
 const { Title, Text } = Typography;
 
@@ -16,7 +15,6 @@ function ProductInfo({
   handleViewCart,
   error,
   setError,
-  isElectronics,
   setSelectedColor,
   colorToImagesMap,
   selectedColor,
@@ -26,28 +24,22 @@ function ProductInfo({
   );
   const sizes = [...new Set(variantsByColor.map((v) => v.size))];
 
-  // Determine the currently selected variant
   const selectedVariant = product.variants.find(
     (v) => v.color === productDetails.color && v.size === productDetails.size
   );
   const stock = selectedVariant?.stock || productDetails?.stock;
 
-  // Handle size change
   const onSizeSelect = (size) => {
     setProductDetails({ ...productDetails, size, quantity: 1 });
     setError(null);
   };
 
-  // Determine disable state and button label
-  const needsSize = !isElectronics;
-  const noSizeSelected = needsSize && !productDetails.size;
   const outOfStock = stock === 0;
   const overQuantity = productDetails.quantity > stock;
-  const isDisabled = noSizeSelected || outOfStock || overQuantity;
+  const isDisabled = outOfStock || overQuantity;
 
   let buttonText = "Thêm vào giỏ hàng";
   if (outOfStock) buttonText = "Hết hàng";
-  else if (noSizeSelected) buttonText = "Chọn kích thước";
   else if (overQuantity) buttonText = "Vượt quá tồn kho";
 
   return (
@@ -93,33 +85,30 @@ function ProductInfo({
           ))}
         </div>
         <span className="text-sm sm:text-base text-gray-400">
-          Màu: {colorTranslations[selectedColor] || selectedColor}
+          Màu: {selectedColor === "default" ? "Mặc định" : selectedColor}
         </span>
       </div>
 
-      {/* Size Selection */}
-      {!isElectronics && (
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap gap-2">
-            {sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => onSizeSelect(size)}
-                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ${
-                  productDetails.size === size
-                    ? "border-gray-600 scale-105"
-                    : "border-gray-300 hover:scale-105"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-          <span className="text-sm sm:text-base text-gray-400">
-            Size: {productDetails.size}
-          </span>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          {sizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => onSizeSelect(size)}
+              className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ${
+                productDetails.size === size
+                  ? "border-gray-600 scale-105"
+                  : "border-gray-300 hover:scale-105"
+              }`}
+            >
+              {size}
+            </button>
+          ))}
         </div>
-      )}
+        <span className="text-sm sm:text-base text-gray-400">
+          Kích thước: {productDetails.size}
+        </span>
+      </div>
       {/* Quantity Input */}
       <div className="flex flex-col items-start gap-4">
         <InputNumber
