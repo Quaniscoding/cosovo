@@ -13,6 +13,8 @@ import Loading from "../../components/Loading";
 export default function ProductDetails() {
   const { id } = useParams();
   const { product, loading } = useProductDetails(id);
+  const [loadingVariant, setLoadingVariant] = useState(false);
+
   const { categories } = useCategories();
   const { addToCart } = useContext(CartContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +57,26 @@ export default function ProductDetails() {
   if (loading || !product) {
     return <Loading loading={loading} />;
   }
-
+  const handleSelectColor = (color) => {
+    setLoadingVariant(true);
+    setSelectedColor(color);
+    const variantsOfColor = product.variants.filter((v) => v.color === color);
+    const firstVariant = variantsOfColor[0];
+    setTimeout(() => {
+      setProductDetails({
+        ...productDetails,
+        color: color,
+        size: firstVariant?.size || "",
+        price: firstVariant?.price || 0,
+        stock: firstVariant?.stock || 0,
+        image: firstVariant?.images[0]?.url || "",
+        quantity: 1,
+        variant_id: firstVariant?.id || null,
+      });
+      setLoadingVariant(false);
+      setError(null);
+    }, 350);
+  };
   const handleAdd = () => {
     const selectedVariant =
       product.variants.find(
@@ -74,6 +95,7 @@ export default function ProductDetails() {
       quantity: productDetails.quantity,
       image: selectedVariant.images[0]?.url || "",
       variant_id: selectedVariant.id,
+      max_quantity: selectedVariant.stock,
     });
     return true;
   };
@@ -115,6 +137,7 @@ export default function ProductDetails() {
           setSelectedColor={setSelectedColor}
           selectedColor={selectedColor}
           colorToImagesMap={colorToImagesMap}
+          loadingVariant={loadingVariant}
         />
         <ProductInfo
           product={product}
@@ -128,9 +151,10 @@ export default function ProductDetails() {
           error={error}
           setError={setError}
           currentCategory={currentCategory}
-          setSelectedColor={setSelectedColor}
+          setSelectedColor={handleSelectColor}
           colorToImagesMap={colorToImagesMap}
           selectedColor={selectedColor}
+          loadingVariant={loadingVariant}
         />
       </div>
     </div>

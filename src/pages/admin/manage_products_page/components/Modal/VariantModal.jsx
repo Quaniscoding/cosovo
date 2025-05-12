@@ -33,9 +33,15 @@ const VariantModal = ({
       rules: [{ required: true, message: "Vui lòng nhập tồn kho" }],
     },
     {
+      name: "cost",
+      label: "Giá nhập",
+      placeholder: "Nhập giá nhập",
+      rules: [{ required: true, message: "Vui lòng nhập giá nhập" }],
+    },
+    {
       name: "price",
-      label: "Giá",
-      placeholder: "Nhập giá",
+      label: "Giá bán",
+      placeholder: "Nhập giá bán",
       rules: [{ required: true, message: "Vui lòng nhập giá" }],
     },
     {

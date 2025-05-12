@@ -1,5 +1,4 @@
-import React from "react";
-import { InputNumber, Typography } from "antd";
+import { InputNumber, Spin, Typography } from "antd";
 import ModalNotification from "./ModalNotification";
 import ReusableButton from "../../components/ui/Button";
 
@@ -18,17 +17,18 @@ function ProductInfo({
   setSelectedColor,
   colorToImagesMap,
   selectedColor,
+  loadingVariant,
 }) {
   const variantsByColor = product.variants.filter(
     (v) => v.color === productDetails.color
   );
   const sizes = [...new Set(variantsByColor.map((v) => v.size))];
-
   const selectedVariant = product.variants.find(
     (v) => v.color === productDetails.color && v.size === productDetails.size
   );
-  const stock = selectedVariant?.stock || productDetails?.stock;
 
+  const stock = selectedVariant?.stock || productDetails?.stock;
+  const price = selectedVariant?.price || productDetails?.price;
   const onSizeSelect = (size) => {
     setProductDetails({ ...productDetails, size, quantity: 1 });
     setError(null);
@@ -52,9 +52,16 @@ function ProductInfo({
         {product.name}
       </Title>
       <span className="text-base sm:text-lg lg:text-xl text-black font-bold text-center">
-        {productDetails.price.toLocaleString()} VND
+        {loadingVariant ? (
+          <Spin size="small" />
+        ) : (
+          `${price.toLocaleString()} VND`
+        )}
       </span>
-      <Text type="secondary" className="text-sm sm:text-base">
+      <Text
+        type="secondary"
+        className="text-sm sm:text-base whitespace-pre-line break-words"
+      >
         {product.description || "Không có mô tả"}
       </Text>
 
@@ -84,19 +91,23 @@ function ProductInfo({
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
-          {sizes.map((size) => (
-            <button
-              key={size}
-              onClick={() => onSizeSelect(size)}
-              className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ${
-                productDetails.size === size
-                  ? "border-gray-600 scale-105"
-                  : "border-gray-300 hover:scale-105"
-              }`}
-            >
-              {size}
-            </button>
-          ))}
+          {loadingVariant ? (
+            <Spin size="small" />
+          ) : (
+            sizes.map((size) => (
+              <button
+                key={size}
+                onClick={() => onSizeSelect(size)}
+                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base border-2 transform transition-transform duration-200 cursor-pointer ${
+                  productDetails.size === size
+                    ? "border-gray-600 scale-105"
+                    : "border-gray-300 hover:scale-105"
+                }`}
+              >
+                {size}
+              </button>
+            ))
+          )}
         </div>
         <span className="text-sm sm:text-base text-gray-400">
           Kích thước: {productDetails.size}

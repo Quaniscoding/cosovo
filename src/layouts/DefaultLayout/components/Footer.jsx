@@ -1,6 +1,8 @@
-import React from "react";
+import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
+  const navigate = useNavigate();
   return (
     <footer className="bg-gray-100 text-gray-700 text-sm border-t border-gray-300 mt-10">
       <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -41,10 +43,17 @@ export default function Footer() {
           </p>
         </div>
         <div>
-          <h3 className="font-semibold mb-2">Về chúng tôi</h3>
-          <p>Hải Cosovo - Since 2007</p>
+          <Button
+            className="font-semibold mb-2"
+            color="default"
+            variant="outlined"
+            onClick={() => navigate("/ve-chung-toi")}
+          >
+            Về chúng tôi
+          </Button>
+          {/* <p>Hải Cosovo - Since 2007</p>
           <p>Chuyên cung cấp thiết bị điện tử & đồ gia dụng chính hãng.</p>
-          <p>Uy tín - Tận Tâm - Chính hãng.</p>
+          <p>Uy tín - Tận Tâm - Chính hãng.</p> */}
         </div>
       </div>
       <div className="text-center py-3 border-t border-gray-200 text-gray-500">

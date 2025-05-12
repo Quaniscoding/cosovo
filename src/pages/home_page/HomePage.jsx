@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import { Skeleton } from "antd";
 import Loading from "../../components/Loading";
 import CategorySection from "./components/CategorySection";
 import ProductCard from "./components/ProductCard";
@@ -45,20 +44,11 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto py-4">
-          {loading
-            ? Array.from({ length: 8 }).map((_, idx) => (
-                <div key={idx} className="w-full">
-                  <Skeleton.Node
-                    active
-                    className="!w-[165px] sm:!w-[200px] md:!w-[240px] xl:!w-[300px] h-[200px] md:h-[400px] rounded-lg border border-gray-200"
-                  ></Skeleton.Node>
-                </div>
-              ))
-            : products?.items?.map((product, idx) => (
-                <div key={product?.id || idx} className="w-full">
-                  <ProductCard product={product} />
-                </div>
-              ))}
+          {products?.items?.map((product, idx) => (
+            <div key={product?.id || idx} className="w-full">
+              <ProductCard product={product} loading={loading} />
+            </div>
+          ))}
         </div>
       </div>
     </>

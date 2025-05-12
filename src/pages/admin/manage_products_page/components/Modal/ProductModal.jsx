@@ -25,6 +25,7 @@ const ProductModal = ({
     {
       name: "description",
       label: "Mô tả",
+      type: "textarea",
       placeholder: "Nhập mô tả ngắn gọn",
     },
     {

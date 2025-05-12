@@ -40,7 +40,7 @@ export default function ManageProductsPage() {
   const [fileListVariant, setFileListVariant] = useState([]);
   const [disabled, setDisabled] = useState(false);
   if (loading && !products?.items) return <Loading loading />;
-  if (error) navigate("/loi");
+  // if (error) navigate("/loi");
 
   const handleAddProduct = () => {
     setProductModalVisible(true);
@@ -75,7 +75,7 @@ export default function ManageProductsPage() {
           return;
         }
         formData.append("name", values.name);
-        formData.append("desc", values.description || "");
+        formData.append("desc", values.description);
         formData.append("category_id", values.category_id);
         formData.append("unique", "true");
         formData.append("stock", values.stock);
@@ -88,11 +88,17 @@ export default function ManageProductsPage() {
         });
       } else {
         formData.append("name", values.name);
-        formData.append("desc", values.description || "");
+        formData.append("desc", values.description);
         formData.append("category_id", values.category_id);
         formData.append("unique", "false");
       }
       try {
+        // console.log(values);
+
+        // for (let [key, value] of formData.entries()) {
+        //   console.log(`${key}:`, value);
+        // }
+        // return;
         const res = await createProduct(formData);
         if (res.status === 200) {
           toast.success("Thêm sản phẩm thành công!");
@@ -123,6 +129,7 @@ export default function ManageProductsPage() {
       formData.append("size", size);
       formData.append("stock", values.stock);
       formData.append("price", values.price);
+      formData.append("cost", values.cost);
       fileListVariant.forEach((file) => {
         formData.append(`file`, file.originFileObj);
       });
@@ -148,10 +155,8 @@ export default function ManageProductsPage() {
       formData.append("color", color);
       formData.append("size", size);
       formData.append("stock", values.stock);
-      formData.append(
-        "price",
-        values.price ? parseInt(values.price.replace(/\./g, "")) : 0
-      );
+      formData.append("price", values.price);
+      formData.append("cost", values.cost);
       fileListVariant.forEach((file) => {
         formData.append(`file`, file.originFileObj);
       });

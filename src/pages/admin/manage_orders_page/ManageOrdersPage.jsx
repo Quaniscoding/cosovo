@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrdersTable from "./components/OrdersTable";
 import { useOrders } from "../../../hooks/useOrders";
@@ -32,7 +32,7 @@ export default function ManageOrdersPage() {
   const [formResetKey, setFormResetKey] = useState(0);
   const { categories } = useCategories();
   if (loading && !orders) return <Loading loading />;
-  if (error) navigate("/loi");
+  // if (error) navigate("/loi");
 
   const getSelectedItems = () => {
     return {

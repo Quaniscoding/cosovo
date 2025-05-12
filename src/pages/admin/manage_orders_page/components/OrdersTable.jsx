@@ -1,11 +1,8 @@
-import { Image, Select, Table, Tag } from "antd";
+import { Image, Switch, Table } from "antd";
 import moment from "moment";
 import React from "react";
 import ActionButtons from "./ActionButtons";
-import {
-  orderStatusOptions,
-  preparedOptions,
-} from "../../../../constants/status";
+import { orderStatusOptions } from "../../../../constants/status";
 
 export default function OrdersTable({
   orders,
@@ -47,13 +44,13 @@ export default function OrdersTable({
       title: "Chuẩn bị",
       dataIndex: "prepared",
       key: "prepared",
-      width: 160,
+      width: 200,
       render: (prepared, record) => (
-        <Select
-          value={prepared}
-          style={{ width: 140 }}
+        <Switch
+          checked={prepared}
           onChange={(value) => handlePrepareOrder(record.id, value)}
-          options={preparedOptions}
+          checkedChildren="Xong"
+          unCheckedChildren="Chưa"
         />
       ),
     },

@@ -82,3 +82,9 @@
 .ant-checkbox-inner:after {
     background-color: #d7dadd !important;
 }
+
+.ant-skeleton-image {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0px !important;
+}

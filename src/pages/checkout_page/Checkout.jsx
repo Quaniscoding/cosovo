@@ -23,7 +23,6 @@ export default function Checkout() {
   const [loadingQr, setLoadingQr] = useState(false);
   const navigate = useNavigate();
 
-  // Parse localStorage data safely
   const parsedData = useMemo(() => {
     try {
       const saved = localStorage.getItem("checkoutForm");

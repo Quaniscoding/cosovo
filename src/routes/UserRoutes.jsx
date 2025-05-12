@@ -6,6 +6,7 @@ import NotFoundPage from "../pages/not_found_page/NotFoundPage.jsx";
 import Cart from "../pages/cart_page/Cart.jsx";
 import Checkout from "../pages/checkout_page/Checkout.jsx";
 import LoginPage from "../pages/login_page/LoginPage.jsx";
+import AboutUsPage from "../pages/about_us_page/AboutUsPage.jsx";
 import ErrorPage from "../pages/error_page/ErrorPage.jsx";
 
 const UserRoutes = () => (
@@ -14,6 +15,7 @@ const UserRoutes = () => (
       <Route path="/" element={<HomePage />} />
       <Route path="/san-pham/:id" element={<ProductDetails />} />
       <Route path="/gio-hang" element={<Cart />} />
+      <Route path="/ve-chung-toi" element={<AboutUsPage />} />
     </Route>
     <Route path="/thanh-toan" element={<Checkout />} />
     <Route path="/dang-nhap" element={<LoginPage />} />

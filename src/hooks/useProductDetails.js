@@ -19,6 +19,7 @@ export function useProductDetails(id) {
       dispatch(fetchProductDetailsRequest());
       try {
         const { data } = await getProductsDetails(id);
+        await new Promise((res) => setTimeout(res, 400));
         dispatch(fetchProductDetailsSuccess(data.data));
       } catch (error) {
         dispatch(fetchProductDetailsFailure(error.message));

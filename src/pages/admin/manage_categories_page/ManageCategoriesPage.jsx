@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function ManageCategoriesPage() {
   const navigate = useNavigate();
   const { categories, loading, error } = useCategories();
-  if (error) navigate("/loi");
+  // if (error) navigate("/loi");
   const columns = [
     {
       title: "ID",

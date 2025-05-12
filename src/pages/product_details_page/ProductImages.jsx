@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs, Pagination } from "swiper/modules";
 
-import { Image } from "antd";
+import { Image, Skeleton } from "antd";
 export default function ProductImages({
   productDetails,
   setProductDetails,
   selectedColor,
   colorToImagesMap,
+  loadingVariant,
 }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -28,8 +29,7 @@ export default function ProductImages({
 
   return (
     <div className="flex flex-col gap-2 md:gap-4 w-full lg:col-span-6">
-      {/* Main Swiper với responsive height */}
-      <div className="w-full rounded-lg overflow-hidden">
+      <div className="w-full overflow-hidden">
         <Swiper
           spaceBetween={10}
           navigation={!isMobile}
@@ -37,31 +37,40 @@ export default function ProductImages({
           modules={[Thumbs, Navigation, Pagination]}
           className="w-full"
           style={{
-            // Responsive height cho main swiper
             height: isMobile ? "300px" : "650px",
           }}
           thumbs={{ swiper: thumbsSwiper }}
         >
           {currentImages.map((img, idx) => (
             <SwiperSlide key={idx} className="flex items-center justify-center">
-              <Image
-                src={productDetails.image}
-                fallback="src/assets/images/noimg.png"
-                alt={`Product Image ${idx + 1}`}
-                className="!h-full w-full object-contain rounded-lg cursor-pointer"
-                onClick={() =>
-                  setProductDetails((prev) => ({ ...prev, image: img }))
-                }
-              />
+              {loadingVariant ? (
+                <Skeleton.Image active rootClassName="!h-full !w-full" />
+              ) : (
+                <Image
+                  src={productDetails.image}
+                  fallback="src/assets/images/noimg.png"
+                  alt={`Product Image ${idx + 1}`}
+                  className="!h-full w-full !object-contain cursor-pointer"
+                  onClick={() =>
+                    setProductDetails((prev) => ({ ...prev, image: img }))
+                  }
+                  loading="lazy"
+                />
+              )}
             </SwiperSlide>
           ))}
           {currentImages.length === 0 && (
             <SwiperSlide className="flex items-center justify-center">
-              <img
-                src="/src/assets/images/noimg.png"
-                alt="Product Image"
-                className="!h-full w-full object-contain rounded-lg cursor-pointer"
-              />
+              {loadingVariant ? (
+                <Skeleton.Image active rootClassName="!h-full !w-full" />
+              ) : (
+                <img
+                  src="/src/assets/images/noimg.png"
+                  alt="Product Image"
+                  className="!h-full !w-full !object-contain cursor-pointer"
+                  loading="lazy"
+                />
+              )}
             </SwiperSlide>
           )}
         </Swiper>
@@ -93,14 +102,19 @@ export default function ProductImages({
                     : "border-gray-200"
                 }`}
               >
-                <img
-                  src={img}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-all duration-300"
-                  onClick={() =>
-                    setProductDetails((prev) => ({ ...prev, image: img }))
-                  }
-                />
+                {loadingVariant ? (
+                  <Skeleton.Image active rootClassName="!h-full !w-full" />
+                ) : (
+                  <img
+                    src={img}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-all duration-300"
+                    onClick={() =>
+                      setProductDetails((prev) => ({ ...prev, image: img }))
+                    }
+                    loading="lazy"
+                  />
+                )}
               </div>
             </SwiperSlide>
           ))}

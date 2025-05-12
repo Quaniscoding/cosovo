@@ -25,7 +25,8 @@ const ProductTable = ({
       title: "Mô tả",
       dataIndex: "description",
       width: 250,
-      render: (text) => (text ? text.slice(0, 50) + "..." : "Chưa có mô tả"),
+      render: (description) =>
+        description ? description.slice(0, 50) + "..." : "Chưa có mô tả",
     },
     {
       title: "Danh mục",
@@ -70,6 +71,7 @@ const ProductTable = ({
       ),
     },
   ];
+  // console.log(products.items);
 
   const variantColumns = [
     {
@@ -86,11 +88,18 @@ const ProductTable = ({
     },
     { title: "Tồn", dataIndex: "stock", width: 80 },
     {
+      title: "Giá nhập",
+      dataIndex: "cost",
+      sorter: true,
+      width: 120,
+      render: (cost) => cost,
+    },
+    {
       title: "Giá",
       dataIndex: "price",
       sorter: true,
       width: 120,
-      render: (price) => formatVND(price),
+      render: (price) => price,
     },
     {
       title: "Hình ảnh",

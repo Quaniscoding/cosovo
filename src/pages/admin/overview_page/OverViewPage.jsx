@@ -24,7 +24,8 @@ export default function OverViewPage() {
     endDate: null,
   });
   const { revenues, loadingPage, loadingTable, error } = useRevenues(payload);
-  if (error) navigate("/loi");
+  // if (error) navigate("/loi");
+  console.log(revenues);
 
   const columns = [
     { title: "ID đơn hàng", dataIndex: "order_id", key: "order_id" },

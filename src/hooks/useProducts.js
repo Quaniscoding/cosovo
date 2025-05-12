@@ -28,13 +28,13 @@ export function useProducts(payload) {
       dispatch(fetchProductsRequest());
       try {
         if (cache.current[key]) {
-          await new Promise((res) => setTimeout(res, 300));
+          await new Promise((res) => setTimeout(res, 1000));
           dispatch(fetchProductsSuccess(cache.current[key]));
           return;
         }
 
         const { data } = await getProducts(debouncedPayload);
-        await new Promise((res) => setTimeout(res, 300));
+        await new Promise((res) => setTimeout(res, 1000));
 
         dispatch(fetchProductsSuccess(data.data));
         cache.current[key] = data.data;

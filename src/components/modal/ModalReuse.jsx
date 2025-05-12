@@ -70,7 +70,7 @@ export default function ModalReuse({
                 { name, label, placeholder, type = "text", component, rules },
                 idx
               ) => {
-                if (name === "price") {
+                if (name === "price" || name === "cost") {
                   return (
                     <Form.Item
                       key={idx}
@@ -97,24 +97,17 @@ export default function ModalReuse({
                         ]
                       }
                     >
-                      <Form.Item noStyle shouldUpdate>
-                        {({ getFieldValue, setFieldsValue }) => (
-                          <Input
-                            type="text"
-                            placeholder={placeholder || "Nhập giá"}
-                            value={getFieldValue(name)}
-                            onChange={(e) => {
-                              const rawValue = e.target.value.replace(
-                                /\D/g,
-                                ""
-                              );
-                              const formatted =
-                                Number(rawValue).toLocaleString("vi-VN");
-                              setFieldsValue({ [name]: formatted });
-                            }}
-                            addonAfter="đ"
-                          />
-                        )}
+                      <Form.Item
+                        name={name}
+                        normalize={(value) => {
+                          const rawValue = String(value).replace(/\D/g, "");
+                          return Number(rawValue).toLocaleString("vi-VN");
+                        }}
+                      >
+                        <Input
+                          placeholder={placeholder || "Nhập giá"}
+                          addonAfter="đ"
+                        />
                       </Form.Item>
                     </Form.Item>
                   );
@@ -140,7 +133,22 @@ export default function ModalReuse({
                     </Form.Item>
                   );
                 }
-
+                if (type === "textarea") {
+                  return (
+                    <Form.Item
+                      key={idx}
+                      name={name}
+                      label={
+                        <span className="text-gray-700 font-semibold">
+                          {label}
+                        </span>
+                      }
+                      rules={rules}
+                    >
+                      <Input.TextArea placeholder={placeholder} rows={3} />
+                    </Form.Item>
+                  );
+                }
                 return (
                   <InputField
                     key={idx}
