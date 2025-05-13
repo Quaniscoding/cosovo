@@ -106,8 +106,8 @@ export default function ProductSelector({
                 <Row gutter={16} align="middle">
                   <Col span={4}>
                     <Image
-                      width={64}
-                      height={64}
+                      width={55}
+                      height={55}
                       className="rounded object-cover"
                       src={variant.images[0]?.url}
                       fallback="src/assets/images/noimage.png"

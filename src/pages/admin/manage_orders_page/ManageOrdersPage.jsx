@@ -60,7 +60,7 @@ export default function ManageOrdersPage() {
       }
       const res = await adminCreateOrder({
         ...values,
-        status: "admin",
+        created_by: "admin",
         ...getSelectedItems(),
       });
       if (res.status === 201) {

@@ -54,15 +54,15 @@ export default function FormUser({
         >
           <Input placeholder="Số điện thoại" allowClear />
         </Form.Item>
-        <Form.Item label="Ghi chú" name="customer_note">
-          <Input.TextArea rows={3} placeholder="Ghi chú" allowClear />
-        </Form.Item>
         <Form.Item
           label="Địa chỉ giao hàng"
           name="customer_address"
           rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
         >
           <Input.TextArea rows={3} placeholder="Địa chỉ" allowClear />
+        </Form.Item>
+        <Form.Item label="Ghi chú" name="customer_note">
+          <Input.TextArea rows={3} placeholder="Ghi chú" allowClear />
         </Form.Item>
         <div className="w-full flex gap-4">
           <Form.Item>

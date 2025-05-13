@@ -22,16 +22,25 @@ export default function CreateOrderModal({
       rules: [{ required: true, message: "Vui nhập tên khách hàng" }],
     },
     {
-      name: "customer_phone",
-      label: "Số điện thoại",
-      placeholder: "Nhập số điện thoại",
-      rules: [{ required: true, message: "Vui nhập số điện thoại" }],
-    },
-    {
       name: "customer_email",
       label: "Email",
       placeholder: "Nhập email",
-      rules: [{ required: true, message: "Vui nhập email" }],
+      rules: [
+        { required: true, message: "Vui nhập email" },
+        { type: "email", message: "Email không hợp lệ" },
+      ],
+    },
+    {
+      name: "customer_phone",
+      label: "Số điện thoại",
+      placeholder: "Nhập số điện thoại",
+      rules: [
+        { required: true, message: "Vui lòng nhập số điện thoại" },
+        {
+          pattern: /^\d{10}$/,
+          message: "Số điện thoại phải gồm đúng 10 chữ số",
+        },
+      ],
     },
     {
       name: "customer_address",

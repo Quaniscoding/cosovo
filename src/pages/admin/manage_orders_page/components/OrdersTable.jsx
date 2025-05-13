@@ -26,11 +26,13 @@ export default function OrdersTable({
     },
     {
       title: "Người tạo đơn",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "created_by",
+      key: "created_by",
       width: 160,
-      render: (status) => (
-        <span>{orderStatusOptions.find((o) => o.value === status)?.label}</span>
+      render: (created_by) => (
+        <span>
+          {orderStatusOptions.find((o) => o.value === created_by)?.label}
+        </span>
       ),
     },
     {
