@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import { Form, Typography, Steps, Button, Result } from "antd";
+import { Typography, Steps, Button, Result, Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../../services/OrderServices";
 import { createQrCode } from "../../services/QrServices";
@@ -14,15 +14,14 @@ const { Title } = Typography;
 const { Step } = Steps;
 
 export default function Checkout() {
+  const [form] = Form.useForm();
   const { cartItems, clearCart } = useContext(CartContext);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
-  const [form] = Form.useForm();
-  const [orderPayload, setOrderPayload] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [loadingQr, setLoadingQr] = useState(false);
   const navigate = useNavigate();
-
+  const [orderData, setOrderData] = useState(null);
   const parsedData = useMemo(() => {
     try {
       const saved = localStorage.getItem("checkoutForm");
@@ -49,30 +48,46 @@ export default function Checkout() {
   );
 
   const dataBankAccount = useMemo(() => {
-    if (!parsedData) return null;
     return {
       ...bankAccountConfig,
-      addInfo: `${parsedData.customer_name || ""} ${
-        parsedData.customer_phone || ""
-      }`,
       amount: totalAmount.toString(),
     };
-  }, [parsedData, totalAmount]);
-
-  const handleFinishStep1 = useCallback(
+  }, [totalAmount]);
+  const handleCreateOrder = useCallback(
     async (values) => {
       const items = cartItems.map((item) => ({
         variant_id: item.variant_id,
         quantity: item.quantity,
       }));
       const orderData = { ...values, items };
-      setOrderPayload(orderData);
       setLoadingQr(true);
 
       try {
+        const resCreateOrder = await createOrder({
+          ...orderData,
+          created_by: "customer",
+        });
         if (!dataBankAccount)
           throw new Error("Thiếu thông tin tài khoản ngân hàng");
-        const createQr = await createQrCode(dataBankAccount);
+        setOrderData(resCreateOrder.data.data);
+        return resCreateOrder.data.data;
+      } catch (error) {
+        toast.error(error.message || "Tạo đơn hàng thất bại");
+        throw error;
+      } finally {
+        setLoadingQr(false);
+      }
+    },
+    [cartItems, dataBankAccount]
+  );
+  const handleCreateQrCode = useCallback(
+    async (orderData) => {
+      setLoadingQr(true);
+      try {
+        const createQr = await createQrCode({
+          ...dataBankAccount,
+          addInfo: orderData,
+        });
         if (createQr.status === 200) {
           setQrCode(createQr.data.data.qrDataURL);
           setCurrentStep(1);
@@ -85,25 +100,37 @@ export default function Checkout() {
         setLoadingQr(false);
       }
     },
+    [dataBankAccount]
+  );
+  const handleFinishStep0 = useCallback(
+    async (values) => {
+      try {
+        const orderData = await handleCreateOrder(values);
+        await handleCreateQrCode(orderData);
+      } catch (error) {
+        toast.error(error.message || "Tạo QR code thất bại");
+      } finally {
+        setLoadingQr(false);
+      }
+    },
     [cartItems, dataBankAccount]
   );
 
-  const handleCreateOrder = useCallback(async () => {
+  const handleFinishStep1 = useCallback(async () => {
     try {
+      setCurrentStep(2);
       setLoading(true);
-      const res = await createOrder({ ...orderPayload, status: "customer" });
-      if (res.status === 201) {
-        setCurrentStep(2);
-        clearCart();
-      }
     } catch {
       toast.error("Tạo đơn hàng thất bại");
       setCurrentStep(0);
     } finally {
       setLoading(false);
     }
-  }, [orderPayload, clearCart]);
-
+  }, [clearCart]);
+  const handleBackHome = useCallback(() => {
+    clearCart();
+    navigate("/");
+  });
   if (loading) return <Loading loading={loading} />;
 
   if (!cartItems.length) {
@@ -136,7 +163,7 @@ export default function Checkout() {
         {currentStep === 0 && (
           <FormUser
             form={form}
-            handleFinishStep1={handleFinishStep1}
+            handleFinishStep0={handleFinishStep0}
             cartItems={cartItems}
             totalAmount={totalAmount}
             loadingQr={loadingQr}
@@ -150,8 +177,8 @@ export default function Checkout() {
             totalAmount={totalAmount}
             cartItems={cartItems}
             setCurrentStep={setCurrentStep}
-            handleCreateOrder={handleCreateOrder}
             handleFinishStep1={handleFinishStep1}
+            orderData={orderData}
           />
         )}
 
@@ -165,7 +192,7 @@ export default function Checkout() {
                 type="default"
                 variant="solid"
                 key="home"
-                onClick={() => navigate("/")}
+                onClick={() => handleBackHome()}
               >
                 Về trang chủ
               </Button>,

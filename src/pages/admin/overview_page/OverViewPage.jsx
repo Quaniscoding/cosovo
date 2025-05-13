@@ -17,22 +17,32 @@ export default function OverViewPage() {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
+  const now = moment();
   const [payload, setPayload] = useState({
     page: 1,
     size: 10,
-    startDate: null,
-    endDate: null,
+    startDate: now.startOf("month").format("YYYY-MM-DD"),
+    endDate: now.endOf("month").format("YYYY-MM-DD"),
   });
   const { revenues, loadingPage, loadingTable, error } = useRevenues(payload);
-  // if (error) navigate("/loi");
-  console.log(revenues);
 
   const columns = [
-    { title: "ID đơn hàng", dataIndex: "order_id", key: "order_id" },
+    { title: "ID đơn hàng", dataIndex: "id", key: "id" },
+    {
+      title: "Tên khách hàng",
+      dataIndex: "customer_name",
+      key: "customer_name",
+    },
     {
       title: "Tổng tiền",
       dataIndex: "total_price",
       key: "total_price",
+      render: (price) => `${price.toLocaleString()} đ`,
+    },
+    {
+      title: "Lợi nhuận",
+      dataIndex: "profit",
+      key: "profit",
       render: (price) => `${price.toLocaleString()} đ`,
     },
     {
@@ -86,55 +96,83 @@ export default function OverViewPage() {
     }
   };
   const handleReset = () => {
+    const now = moment();
     setPayload((p) => ({
       ...p,
-      startDate: null,
-      endDate: null,
+      startDate: now.startOf("month").format("YYYY-MM-DD"),
+      endDate: now.endOf("month").format("YYYY-MM-DD"),
       page: 1,
     }));
     setSelectedWeek(null);
-    setSelectedMonth(null);
+    setSelectedMonth(dayjs(now)); // hoặc dayjs()
   };
   if (loadingPage) return <Loading loading={loadingPage} />;
   return (
     <div>
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={24} className="mb-4">
-          <Statistic
-            title="Tổng doanh thu"
-            value={formatVND(revenues?.total_revenue) || 0}
-            valueStyle={{ color: "#3f8600" }}
-            suffix="đ"
-            groupSeparator="."
-          />
+      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+        {/* Thống kê: doanh thu & lợi nhuận */}
+        <Col xs={24} md={16}>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Statistic
+                title="Tổng doanh thu"
+                value={revenues?.totalPrice || 0}
+                valueStyle={{ color: "#3f8600" }}
+                suffix="đ"
+                groupSeparator="."
+              />
+            </Col>
+            <Col span={12}>
+              <Statistic
+                title="Tổng lợi nhuận"
+                value={revenues?.totalProfit || 0}
+                valueStyle={{ color: "#3f8600" }}
+                suffix="đ"
+                groupSeparator="."
+              />
+            </Col>
+          </Row>
         </Col>
-        <Col>
-          <WeekPicker
-            value={selectedWeek}
-            onChange={handleWeekChange}
-            locale={viVN}
-            format="WW/YYYY"
-            placeholder="Chọn tuần"
-          />
-        </Col>
-        <Col>
-          <MonthPicker
-            value={selectedMonth}
-            onChange={handleMonthChange}
-            locale={viVN}
-            format="MM/YYYY"
-            placeholder="Chọn tháng"
-          />
-        </Col>
-        <Col>
-          <Button onClick={handleReset}>Xóa lọc</Button>
+
+        {/* Bộ lọc tuần + tháng */}
+        <Col xs={24} md={16}>
+          <Row gutter={[8, 8]}>
+            <Col span={8}>
+              <WeekPicker
+                value={selectedWeek}
+                onChange={handleWeekChange}
+                locale={viVN}
+                format="WW/YYYY"
+                placeholder="Chọn tuần"
+                style={{ width: "100%" }}
+              />
+            </Col>
+            <Col span={8}>
+              <MonthPicker
+                value={selectedMonth || dayjs(now)}
+                onChange={handleMonthChange}
+                locale={viVN}
+                format="MM/YYYY"
+                placeholder="Chọn tháng"
+                style={{ width: "100%" }}
+              />
+            </Col>
+            <Col span={8}>
+              <Button onClick={handleReset} block>
+                Xóa lọc
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
+
       <Table
         columns={columns}
-        dataSource={revenues?.revenues}
+        dataSource={revenues?.orders}
         loading={loadingTable}
+        rowKey="id"
         pagination={{
+          total: revenues?.totalItem || 0,
           onChange: (page, size) => {
             setPayload((p) => ({ ...p, page: page, size: size }));
           },

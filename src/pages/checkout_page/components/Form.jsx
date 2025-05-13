@@ -1,12 +1,11 @@
-import React from "react";
 import { Form, Input, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-const { Title, Text } = Typography;
+const { Title } = Typography;
 import OrderSummary from "./OrderSummary";
 import ReusableButton from "../../../components/ui/Button";
 export default function FormUser({
   form,
-  handleFinishStep1,
+  handleFinishStep0,
   cartItems,
   totalAmount,
   loadingQr,
@@ -16,7 +15,7 @@ export default function FormUser({
     <Form
       form={form}
       layout="vertical"
-      onFinish={handleFinishStep1}
+      onFinish={handleFinishStep0}
       onValuesChange={(_, allValues) => {
         localStorage.setItem("checkoutForm", JSON.stringify(allValues));
       }}

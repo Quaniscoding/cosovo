@@ -13,8 +13,6 @@ export function useVariantDetails(id) {
   const { variantDetails, loading, error } = useSelector(
     (state) => state.variantDetails
   );
-  console.log(variantDetails);
-
   const cache = useRef({});
 
   const debouncedPayload = useDebounce(id, 500);
